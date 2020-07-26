@@ -1,6 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 
 module.exports = {
+    name: 'announce',
     announce: function(msg, who) {
         const announceEmbed = new MessageEmbed()
         .setDescription(msg)

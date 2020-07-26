@@ -1,28 +1,135 @@
 // Modules for Discord
-const { Client, MessageEmbed }= require('discord.js');
-const main = new Client;
+const Discord = require('discord.js');
+const bot = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 
 // 3rd Party Modules
 const cheerio = require('cheerio');
 const request = require('request');
 
 // Self defined modules
-const announce = require('./src/announce');
-const poll = require('./src/poll');
-const event = require('./src/event');
-const suggestion = require('./src/suggestion');
+const announce = require('./src/server/announce');
+const poll = require('./src/server/poll');
+const event = require('./src/server/event');
+const storeSuggestion = require('./src/features/storeSuggestion');
+const respondSuggestion = require('./src/features/respondSuggestion');
 
 // Getting Environment Variables
 const PREFIX = process.env.BOT_PREFIX;
 const discordToken = process.env.BOT_TOKEN;
 
-main.once('ready', () => {
-    console.log("SkyHiker Bot is now Online.");
+// Commands Handler
+const fs = require('fs');
+const path = require('path');
+
+// Asynchronous function to read files (parallel loop)
+const readFiles = function(dir, done) {
+  var results = [];
+  fs.readdir(dir, function(err, list) {
+    if (err) return done(err);
+    var i = 0;
+    (function next() {
+      var file = list[i++];
+      if (!file) return done(null, results);
+      file = path.resolve(dir, file);
+      fs.stat(file, function(err, stat) {
+        if (stat && stat.isDirectory()) {
+          readFiles(file, function(err, res) {
+            results = results.concat(res);
+            next();
+          });
+        } else {
+          results.push(file);
+          next();
+        }
+      });
+    })();
+  });
+};
+
+bot.commands = new Discord.Collection();
+
+readFiles('./src/', async (err, results) => {
+  if (err) throw err;
+
+  for (const commandsFilePath of results) {
+    const command = require(commandsFilePath);
+    bot.commands.set(command.name, command);
+  }
 });
 
-main.on('message', async message => {
+// When the bot is online
+bot.once('ready', async () => {
+    console.log("SkyHiker Bot is now Online.");
+
+    let messageID = '730948451491119286';
+    let welcomeChannel = bot.channels.fetch('730940617034825774');
+});
+
+bot.on('messageReactionAdd', async (reaction, user) => {
+    if (reaction.message.partial) {
+        let { id } = reaction.message;
+        if (id === '730948451491119286') {
+
+        }
+    }
+});
+
+// When the bot listened a message
+bot.on('message', async message => {
     let args = message.content.substring(PREFIX.length).trim().split(" ");
     const command = args.shift().toLowerCase();
+
+    if (command === 'help') {
+      return bot.commands.get('help').help(message, bot);
+    }
+
+    // Moderation Commands
+    if (command === 'ban') {
+        if (!message.member.roles.cache.get("730940617030500379")) {
+            const banNoPermEmbed = new Discord.MessageEmbed()
+                .setColor(0xffc300) // Golden Poppy
+                .setDescription("You don't have a permission to ban a player.");
+
+            return message.channel.send(banNoPermEmbed);
+        }
+        if (!message.mentions.members.first()) {
+            const noTagEmbed = new Discord.MessageEmbed()
+                .setColor(0xffc300) // Golden Poppy
+                .setDescription(
+                "Please specify who you want to ban with '@' followed by his/her name."
+                );
+
+            return message.channel.send(noTagEmbed);
+        }
+
+        const options = {
+            banUser: message.mentions.members.first(),
+            banDuration: parseInt(args.slice(1)[0]),
+            banReason: args.slice(2).join(" ")
+        }
+        // console.log(options.banUser.user.tag);
+        return bot.commands.get('ban').ban(message, bot, options);
+    }
+
+    if (command === 'unban') {
+      if (!message.member.roles.cache.get("730940617030500379")) {
+        const banNoPermEmbed = new Discord.MessageEmbed()
+            .setColor(0xffc300) // Golden Poppy
+            .setDescription("You don't have a permission to unban a player.");
+
+        return message.channel.send(banNoPermEmbed);
+      }
+
+      const options = {
+          unbanUserID: args[0].startsWith('<') ? args[0].slice(3, -1) : args[0],
+          unbanReason: args.slice(1).join(" ").trim()
+      }
+      return bot.commands.get('unban').unban(message, bot, options);
+    }
+
+    if (command === 'checkban') {
+      return bot.commands.get('checkban').checkban(message, bot);
+    }
 
     if(command === 'announce'){
         if(!message.member.roles.cache.get('730940617030500379')){
@@ -103,8 +210,8 @@ main.on('message', async message => {
                 if (!urls.length) {
                     return
                 }
-                let imageChannel = main.channels.cache.get('732201985889140767');
-                const searchEmbed = new MessageEmbed()
+                let imageChannel = bot.channels.cache.get('732201985889140767');
+                const searchEmbed = new Discord.MessageEmbed()
                 .setImage( urls[Math.floor(Math.random() * urls.length)])
                 .setColor(0xE5C918)
                 .setFooter(message.author.username)
@@ -123,7 +230,7 @@ main.on('message', async message => {
         };
 
         try {
-            const suggestionEmbed = await suggestion.storeSuggestion(user, message, main);
+            const suggestionEmbed = await storeSuggestion(user, message, bot);
 
             return (
                 message.channel.send(suggestionEmbed).then(embedMessage => {
@@ -149,10 +256,14 @@ main.on('message', async message => {
             reason: args.slice(1).join(" ")
         }
 
-        const respondEmbed = isApprove ? await suggestion.respondSuggestion(message, main, {userArgs: userArgs, approve: true}) : await suggestion.respondSuggestion(message, main, {userArgs: userArgs, approve: false});
-
-        return message.channel.send(respondEmbed);
+        try {
+            const respondEmbed = isApprove ? await respondSuggestion(message, bot, {userArgs: userArgs, approve: true}) : await respondSuggestion(message, bot, {userArgs: userArgs, approve: false});
+            return message.channel.send(respondEmbed);
+        } catch (error) {
+            console.log(error.message);
+            return message.channel.send('An Error Occured\nPlease contact the Dev Team.');
+        }
     }
 });
 
-main.login(discordToken);
+bot.login(discordToken);

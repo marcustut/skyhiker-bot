@@ -1,6 +1,7 @@
 const { MessageEmbed } = require("discord.js")
 
 module.exports = {
+    name: 'event',
     event: function(msg, who){
         const eventEmbed = new MessageEmbed()
         .setAuthor("**NEW EVENT**", "https://i.imgur.com/zpB4dbi.png")
