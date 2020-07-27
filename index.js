@@ -268,6 +268,7 @@ bot.on("message", async (message) => {
       const suggestionEmbed = await storeSuggestion.storeSuggestion(user, message, bot);
 
       return message.channel.send(suggestionEmbed).then((embedMessage) => {
+        message.delete();
         embedMessage.react("⬆️");
         embedMessage.react("⬇️");
       });
