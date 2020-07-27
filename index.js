@@ -60,8 +60,15 @@ readFiles("./src/", async (err, results) => {
 });
 
 // IDs
-const memberRole = '730940617030500375';
-const welcomeChannel = '730940617034825774';
+const roles = {
+  memberRole: '730940617030500375',
+  staffRole: '730940617030500379'
+}
+
+const channels = {
+  welcomeChannel: '730940617034825774'
+}
+
 const accpetedReactions = ['✅'];
 
 // When the bot is online
@@ -79,9 +86,9 @@ bot.on("messageReactionAdd", async (reaction, user) => {
   if (!reaction.message.guild) return;
 
   // If the reaction comes from Welcome Channel
-  if (reaction.message.channel.id === welcomeChannel) {
+  if (reaction.message.channel.id === channels.welcomeChannel) {
     if (accpetedReactions.includes(reaction.emoji.name)) {
-      await reaction.message.guild.members.cache.get(user.id).roles.add(memberRole);
+      await reaction.message.guild.members.cache.get(user.id).roles.add(roles.memberRole);
     }
   }
 });
@@ -96,11 +103,33 @@ bot.on("messageReactionRemove", async (reaction, user) => {
   if (!reaction.message.guild) return;
 
   // If the reaction comes from Welcome Channel
-  if (reaction.message.channel.id === welcomeChannel) {
+  if (reaction.message.channel.id === channels.welcomeChannel) {
     if (accpetedReactions.includes(reaction.emoji.name)) {
-      await reaction.message.guild.members.cache.get(user.id).roles.remove(memberRole);
+      await reaction.message.guild.members.cache.get(user.id).roles.remove(roles.memberRole);
     }
   }
+});
+
+bot.on("guildMemberAdd", member => {
+  const welcomePM = `Dear ${member.user.tag}, **Welcome to SkyHiker.**\n` +
+                    `Are you looking for other channels? Wondering where we are?\n` +
+                    `Head to our <#${welcomeChannel}> and go through the rules written\n` +
+                    `Once you are done, you react with ✅ to indicate you agree with our rules.\n` +
+                    `\nAs we acknowledge the rules in <#${welcomeChannel}>,\n` +
+                    `kindly be aware of our terms and conditions.\n` +
+                    `\nThank you for supporting our server.\n` +
+                    `See you there soon 😉\n` +
+                    `**SkyHiker**`;
+
+  member.send(welcomePM)
+    .then(message => {
+      console.log(`${member.user.tag} has just joined the server.`);
+    })
+    .catch(console.error);
+});
+
+bot.on("guildMemberRemove", member => {
+  // Send a message at somewhere when someone leaves.
 });
 
 // When the bot listened a message
@@ -109,17 +138,26 @@ bot.on("message", async (message) => {
   const command = args.shift().toLowerCase();
 
   if (command === "help") {
+    message.delete({ timeout: 2000 });
     return bot.commands.get("help").help(message, bot);
+  }
+
+  if (command === "shelp") {
+    message.delete({ timeout: 2000 });
+    return bot.commands.get("shelp").shelp(message, bot);
   }
 
   // Moderation Commands
   if (command === "ban") {
-    if (!message.member.roles.cache.get("730940617030500379")) {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
       const banNoPermEmbed = new Discord.MessageEmbed()
         .setColor(0xffc300) // Golden Poppy
         .setDescription("You don't have a permission to ban a player.");
 
-      return message.channel.send(banNoPermEmbed);
+      message.delete({ timeout: 2000 })
+      return message.channel.send(banNoPermEmbed).then(sentMessage => {
+        sentMessage.delete({ timeout: 3000 });
+      });
     }
     if (!message.mentions.members.first()) {
       const noTagEmbed = new Discord.MessageEmbed()
@@ -128,7 +166,10 @@ bot.on("message", async (message) => {
           "Please specify who you want to ban with '@' followed by his/her name."
         );
 
-      return message.channel.send(noTagEmbed);
+      message.delete({ timeout: 2000 });
+      return message.channel.send(noTagEmbed).then(sentMessage => {
+        sentMessage.delete({ timeout: 3000 });
+      });
     }
 
     const options = {
@@ -136,32 +177,39 @@ bot.on("message", async (message) => {
       banDuration: parseInt(args.slice(1)[0]),
       banReason: args.slice(2).join(" "),
     };
-    // console.log(options.banUser.user.tag);
+
+    message.delete({ timeout: 2000 });
     return bot.commands.get("ban").ban(message, bot, options);
   }
 
   if (command === "unban") {
-    if (!message.member.roles.cache.get("730940617030500379")) {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
       const banNoPermEmbed = new Discord.MessageEmbed()
         .setColor(0xffc300) // Golden Poppy
         .setDescription("You don't have a permission to unban a player.");
 
-      return message.channel.send(banNoPermEmbed);
+      message.delete({ timeout: 2000 });
+      return message.channel.send(banNoPermEmbed).then(sentMessage => {
+        sentMessage.delete({ timeout: 3000 });
+      });
     }
 
     const options = {
       unbanUserID: args[0].startsWith("<") ? args[0].slice(3, -1) : args[0],
       unbanReason: args.slice(1).join(" ").trim(),
     };
+
+    message.delete({ timeout: 2000 });
     return bot.commands.get("unban").unban(message, bot, options);
   }
 
   if (command === "checkban") {
+    message.delete({ timeout: 2000 });
     return bot.commands.get("checkban").checkban(message, bot);
   }
 
   if (command === "announce") {
-    if (!message.member.roles.cache.get("730940617030500379")) {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
       return message.channel.send("You don't have permission");
     }
     if (!args.length) {
@@ -182,7 +230,7 @@ bot.on("message", async (message) => {
     }
   }
   if (command === "poll") {
-    if (!message.member.roles.cache.get("730940617030500379")) {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
       return message.channel.send("You don't have permission");
     }
     if (!args.length) {
@@ -199,7 +247,7 @@ bot.on("message", async (message) => {
     }
   }
   if (command === "event") {
-    if (!message.member.roles.cache.get("730940617030500379")) {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
       return message.channel.send("You don't have permission");
     }
     if (!args.length) {
@@ -268,7 +316,7 @@ bot.on("message", async (message) => {
       const suggestionEmbed = await storeSuggestion.storeSuggestion(user, message, bot);
 
       return message.channel.send(suggestionEmbed).then((embedMessage) => {
-        message.delete();
+        message.delete({ timeout: 1000 });
         embedMessage.react("⬆️");
         embedMessage.react("⬇️");
       });
@@ -276,7 +324,7 @@ bot.on("message", async (message) => {
       console.log(error.message);
       return message.channel.send(
         "An Error Occured\nMake sure your template is correct."
-      );
+      ).then(sentMessage => { sentMessage.delete({ timeout: 3000 }) });
     }
   }
 
@@ -284,14 +332,11 @@ bot.on("message", async (message) => {
     message.content.substring(PREFIX.length).startsWith("approve") ||
     message.content.substring(PREFIX.length).startsWith("deny")
   ) {
-    if (
-      !message.member.roles.cache.get("730940617034825772") &&
-      !message.member.roles.cache.get("730940617034825771") &&
-      !message.member.roles.cache.get("730940617034825770")
-    ) {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
+      message.delete({ timeout: 2000 });
       return message.channel.send(
         "You have no permission to use this command."
-      );
+      ).then(sentMessage => { sentMessage.delete({ timeout: 3000 }) });
     }
 
     const isApprove = message.content
@@ -313,12 +358,14 @@ bot.on("message", async (message) => {
             userArgs: userArgs,
             approve: false,
           });
+      message.delete({ timeout: 2000 });
       return message.channel.send(respondEmbed);
     } catch (error) {
       console.log(error.message);
+      message.delete({ timeout: 2000 });
       return message.channel.send(
         "An Error Occured\nPlease contact the Dev Team."
-      );
+      ).then(sentMessage => { sentMessage.delete({ timeout: 3000 }) });
     }
   }
 
@@ -337,7 +384,8 @@ bot.on("message", async (message) => {
       .addField("\u200b", ":warning: If you choose to break these rules you'll be asked to stop or kicked from the server. Breaking any of these rules may also result in a ban. But follow these few simple guidelines and we'll all have a good time!\n")
       .addField("\u200b", "👇 CLICK THE EMOJI IF YOU ACCEPT THE RULES");
 
-    bot.channels.fetch(welcomeChannel).then(welcomeChannel => {
+    bot.channels.fetch(channels.welcomeChannel).then(welcomeChannel => {
+      message.delete({ timeout: 2000 });
       welcomeChannel.send(addWelcomeEmbed).then(embedMessage => {
         embedMessage.react("✅");
       })
