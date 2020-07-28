@@ -116,7 +116,7 @@ bot.on("guildMemberAdd", member => {
                     `\n**Big WELCOME to our server,**\n` +
                     `Are you looking for others channel?\n` +
                     `Wondering where are us?\n` +
-                    `\nHead to our <#${welcomeChannel}> and go through the rules.\n` +
+                    `\nHead to our <#${channels.welcomeChannel}> and go through the rules.\n` +
                     `\nOnce you are done, react with ✅ to indicate you agree with our terms and conditions.\n` +
                     `**#Please be __AWARE__ of the rules as we already acknowledged**\n` +
                     `\nThank you for supporting us.\n` +
