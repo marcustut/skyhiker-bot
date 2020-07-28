@@ -111,15 +111,18 @@ bot.on("messageReactionRemove", async (reaction, user) => {
 });
 
 bot.on("guildMemberAdd", member => {
-  const welcomePM = `Dear ${member.user.tag}, **Welcome to SkyHiker.**\n` +
-                    `Are you looking for other channels? Wondering where we are?\n` +
-                    `Head to our <#${welcomeChannel}> and go through the rules written\n` +
-                    `Once you are done, you react with ✅ to indicate you agree with our rules.\n` +
-                    `\nAs we acknowledge the rules in <#${welcomeChannel}>,\n` +
-                    `kindly be aware of our terms and conditions.\n` +
-                    `\nThank you for supporting our server.\n` +
-                    `See you there soon 😉\n` +
-                    `**SkyHiker**`;
+  const welcomePM = `============**ＳｋｙＨｉｋｅｒ**============\n` +
+                    `Dear **${member.user.tag}**,\n` +
+                    `\n**Big WELCOME to our server,**\n` +
+                    `Are you looking for others channel?\n` +
+                    `Wondering where are us?\n` +
+                    `\nHead to our <#${welcomeChannel}> and go through the rules.\n` +
+                    `\nOnce you are done, react with ✅ to indicate you agree with our terms and conditions.\n` +
+                    `**#Please be __AWARE__ of the rules as we already acknowledged**\n` +
+                    `\nThank you for supporting us.\n` +
+                    `See ya soon <3\n` +
+                    `\n**𝕊𝕜𝕪ℍ𝕚𝕜𝕖𝕣**\n` +
+                    '-';
 
   member.send(welcomePM)
     .then(message => {
