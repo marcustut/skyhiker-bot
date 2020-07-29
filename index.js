@@ -91,7 +91,7 @@ bot.once("ready", async () => {
 
 bot.on("messageReactionAdd", async (reaction, user) => {
   // Fetch the partials
-  (reaction.message.partial) await reaction.message.fetch();
+  if (reaction.message.partial) await reaction.message.fetch();
   if (reaction.partial) await reaction.fetch();
 
   // If it's bot message or message not in guild then exits
