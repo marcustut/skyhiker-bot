@@ -59,15 +59,28 @@ readFiles("./src/", async (err, results) => {
   }
 });
 
-// IDs
+// Constants Vars
 const roles = {
-  memberRole: '730940617030500375',
-  staffRole: '730940617030500379'
-}
+  memberRole: '737931806187323446',
+  staffRole: '737931806187323448'
+};
 
 const channels = {
-  welcomeChannel: '730940617034825774'
-}
+  welcomeChannel: '737931806221009012',
+  suggestionChannel: '737931806548033541',
+  announcementChannel: '737931806221009015',
+  eventChannel: '737931806221009017',
+  ticketChannel: '737931806548033536',
+  pollsChannel: '737931806548033538'
+};
+
+const banners = {
+  announcementBanner: 'https://i.ibb.co/7gwF1vX/Announcement-Banner.jpg',
+  eventBanner: 'https://i.ibb.co/XxnpMqG/Event-Banner.jpg',
+  pollsBanner: 'https://i.ibb.co/zsDjBcF/Polls-Banner.jpg',
+  suggestionBanner: 'https://i.ibb.co/M59Xfbs/Suggestion-Banner.jpg',
+  supportBanner: 'https://i.ibb.co/52jpdZJ/Support-Banner.jpg'
+};
 
 const accpetedReactions = ['✅'];
 
@@ -78,7 +91,7 @@ bot.once("ready", async () => {
 
 bot.on("messageReactionAdd", async (reaction, user) => {
   // Fetch the partials
-  if (reaction.message.partial) await reaction.message.fetch();
+  (reaction.message.partial) await reaction.message.fetch();
   if (reaction.partial) await reaction.fetch();
 
   // If it's bot message or message not in guild then exits
@@ -296,10 +309,10 @@ bot.on("message", async (message) => {
         if (!urls.length) {
           return;
         }
-        let imageChannel = bot.channels.cache.get("732201985889140767");
+        let imageChannel = bot.channels.cache.get("737931806548033542");
         const searchEmbed = new Discord.MessageEmbed()
           .setImage(urls[Math.floor(Math.random() * urls.length)])
-          .setColor(0xe5c918)
+          .setColor(0xffc300)
           .setFooter(message.author.username)
           .setTimestamp();
         imageChannel.send(searchEmbed);
@@ -307,6 +320,22 @@ bot.on("message", async (message) => {
     }
   }
   if (message.content.substring(PREFIX.length).startsWith("suggestion")) {
+    if (message.channel.id !== channels.suggestionChannel) {
+      const invalidChannelEmbed = new Discord.MessageEmbed()
+        .setColor(0xffc300)
+        .setTitle(
+          `Invalid Channel`
+        )
+        .addField(`This command is only available in <#${channels.suggestionChannel}>`)
+        .setFooter(bot.user.username, bot.user.displayAvatarURL())
+        .setTimestamp();
+
+      return message.channel
+        .send(invalidChannelEmbed)
+        .then(sentMessage => {
+          sentMessage.delete({ timeout: 3000 });
+      });
+    }
     // Parsing data from template message
     const parsedMesssage = message.content.trim().split("\n");
     const user = {
@@ -387,11 +416,91 @@ bot.on("message", async (message) => {
       .addField("\u200b", ":warning: If you choose to break these rules you'll be asked to stop or kicked from the server. Breaking any of these rules may also result in a ban. But follow these few simple guidelines and we'll all have a good time!\n")
       .addField("\u200b", "👇 CLICK THE EMOJI IF YOU ACCEPT THE RULES");
 
-    bot.channels.fetch(channels.welcomeChannel).then(welcomeChannel => {
+    return bot.channels.fetch(channels.welcomeChannel).then(welcomeChannel => {
       message.delete({ timeout: 2000 });
       welcomeChannel.send(addWelcomeEmbed).then(embedMessage => {
         embedMessage.react("✅");
-      })
+      });
+    });
+  }
+
+  if (command.toLowerCase() === 'addsuggestionmsg') {
+    const addSuggestionEmbed = new Discord.MessageEmbed()
+      .setTitle("SUGGESTION 💭")
+      .setColor(0xffc300)
+      .setDescription("**We welcome any reasonable and suitable suggestions**\nPlease use the following template to write your suggestion.")
+      .addField("\u200B", "```\n;suggestion\nIGN: \nSuggestion: \nReason: \n```")
+      .addField("\u200B", "**Staff will respond to your suggestions within 3 days**")
+      .setImage(banners.suggestionBanner)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL())
+      .setTimestamp();
+
+    return bot.channels.fetch(channels.suggestionChannel).then(suggestionChannel => {
+      message.delete({ timeout: 2000 });
+      suggestionChannel.send(addSuggestionEmbed);
+    });
+  }
+
+  if (command.toLowerCase() === 'addpollsmsg') {
+    const addPollsEmbed = new Discord.MessageEmbed()
+      .setTitle("POLLS 📊")
+      .setColor(0xffc300)
+      .setDescription("Help us make a decision by voting in the poll!")
+      .setImage(banners.pollsBanner)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL())
+      .setTimestamp();
+
+    return bot.channels.fetch(channels.pollsChannel).then(pollsChannel => {
+      message.delete({ timeout: 2000 });
+      pollsChannel.send(addPollsEmbed);
+    });
+  }
+
+  if (command.toLowerCase() === 'addsupportmsg') {
+    const addSupportEmbed = new Discord.MessageEmbed()
+      .setTitle("SUPPORT 📬")
+      .setColor(0xffc300)
+      .addField("**Report Player Format**", "```\nYour IGN: \nPlayer: \nReason: \n```")
+      .addField("**Server Issue Format**", "```\nYour IGN: \nIssue: \n```")
+      .addField("**Enquiries Format**", "```\nYour IGN: \nQuestion: \n```")
+      .addField("⚠FOLLOW THIS FORMAT⚠", "🔹 **You won't get any support if you didn't follow this format** and the Staff team have rights to close your ticket submission!")
+      .setImage(banners.supportBanner)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL())
+      .setTimestamp();
+
+    return bot.channels.fetch(channels.ticketChannel).then(ticketChannel => {
+      message.delete({ timeout: 2000 });
+      ticketChannel.send(addSupportEmbed);
+    });
+  }
+
+  if (command.toLowerCase() === 'addeventmsg') {
+    const addEventEmbed = new Discord.MessageEmbed()
+      .setTitle("EVENT 🎊")
+      .setColor(0xffc300)
+      .addField("**STAY TUNE**", "There are a lot of events in the server!\nParticipate and get a chance to win yourself a Legendary Loot! 🎁")
+      .setImage(banners.eventBanner)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL())
+      .setTimestamp();
+
+    return bot.channels.fetch(channels.eventChannel).then(eventChannel => {
+      message.delete({ timeout: 2000 });
+      eventChannel.send(addEventEmbed);
+    });
+  }
+
+  if (command.toLowerCase() === 'addannouncementmsg') {
+    const addAnnouncementEmbed = new Discord.MessageEmbed()
+      .setTitle("ANNOUNCEMENT 📢")
+      .setColor(0xffc300)
+      .setDescription("Keep updated on what's going on in this server!")
+      .setImage(banners.announcementBanner)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL())
+      .setTimestamp();
+
+    return bot.channels.fetch(channels.announcementChannel).then(announcementChannel => {
+      message.delete({ timeout: 2000 });
+      announcementChannel.send(addAnnouncementEmbed);
     });
   }
 });
