@@ -71,10 +71,12 @@ const channels = {
   announcementChannel: '737931806221009015',
   eventChannel: '737931806221009017',
   ticketChannel: '737931806548033536',
-  pollsChannel: '737931806548033538'
+  pollsChannel: '737931806548033538',
+  whatzupChannel: '737931806548033540'
 };
 
 const banners = {
+  skyHikerBanner: 'https://i.ibb.co/NC59c2V/Sky-Hiker-Banner.png',
   announcementBanner: 'https://i.ibb.co/7gwF1vX/Announcement-Banner.jpg',
   eventBanner: 'https://i.ibb.co/XxnpMqG/Event-Banner.jpg',
   pollsBanner: 'https://i.ibb.co/zsDjBcF/Polls-Banner.jpg',
@@ -414,7 +416,10 @@ bot.on("message", async (message) => {
                                     ":small_blue_diamond: **Remain respectful** of others at all times." +
                                     ":small_blue_diamond: **Don't evade filters.** This applies to both words and links. If something is censored, it is censored for a reason!")
       .addField("\u200b", ":warning: If you choose to break these rules you'll be asked to stop or kicked from the server. Breaking any of these rules may also result in a ban. But follow these few simple guidelines and we'll all have a good time!\n")
-      .addField("\u200b", "👇 CLICK THE EMOJI IF YOU ACCEPT THE RULES");
+      .addField("\u200b", "👇 CLICK THE EMOJI IF YOU ACCEPT THE RULES")
+      .setImage(banners.skyHikerBanner)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL())
+      .setTimestamp();
 
     return bot.channels.fetch(channels.welcomeChannel).then(welcomeChannel => {
       message.delete({ timeout: 2000 });
@@ -502,6 +507,21 @@ bot.on("message", async (message) => {
       message.delete({ timeout: 2000 });
       announcementChannel.send(addAnnouncementEmbed);
     });
+  }
+
+  if (command.toLowerCase() === 'addwhatzupmsg') {
+    const addWhatzUpEmbed = new Discord.MessageEmbed()
+      .setTitle("WHATZ-UP 💬")
+      .setColor(0xffc300)
+      .setImage(banners.skyHikerBanner)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL())
+      .setTimestamp();
+
+    return bot.channels.fetch(channels.whatzupChannel).then(whatzupChannel => {
+      message.delete({ timeout: 2000 });
+      whatzupChannel.send(addWhatzUpEmbed);
+    });
+
   }
 });
 
