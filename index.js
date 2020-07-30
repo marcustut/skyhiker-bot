@@ -155,7 +155,7 @@ bot.on("guildMemberRemove", member => {
 // When the bot listened a message
 bot.on("message", async (message) => {
   // If the message doesn't startsWith PREFIX or bot is the sender
-  if (!message.content.startsWith(prefix) || message.author.bot) return;
+  if (!message.content.startsWith(PREFIX) || message.author.bot) return;
 
   let args = message.content.substring(PREFIX.length).trim().split(" ");
   const command = args.shift().toLowerCase();
@@ -233,63 +233,65 @@ bot.on("message", async (message) => {
 
   if (command === "announce") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
-      return message.channel.send("You don't have permission");
+      message.delete({ timeout: 2000 });
+      return message.channel.send("You don't have permission").then(sentMessage => sentMessage.delete({ timeout: 3000 }));
     }
-    if (!args.length) {
-      return message.channel.send(
-        process.env.prefix + "announce <channel> <message>"
-      );
-    } else {
-      let announceWhosend = message.author.username;
-      let announceArgs = args.slice(1).join(" ");
-      let announceChannel = message.mentions.channels.first();
-      if (!announceChannel) {
+
+    if (!args.length) 
+      return message.channel.send(`Please use the command this way\n\n${PREFIX}announce <channel> <message>`);
+    else {
+      const announcementAuthor = message.author.username;
+      const announceArgs = args.slice(1).join(" ");
+      const announceChannel = message.mentions.channels.first();
+
+      if (!announceChannel)
         return message.channel.send("I believe that channel did not exist!");
-      } else {
-        return announceChannel.send(
-          announce.announce(announceArgs, announceWhosend)
-        );
-      }
+      else 
+        return announceChannel.send(announce.announce(announceArgs, announcementAuthor));
     }
   }
   if (command === "poll") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
-      return message.channel.send("You don't have permission");
+      message.delete({ timeout: 2000 });
+      return message.channel.send("You don't have permission").then(sentMessage => sentMessage.delete({ timeout: 3000 }));
     }
-    if (!args.length) {
+
+    if (!args.length) 
       return message.channel.send("What poll you want to create?");
-    } else {
-      let pollWhosend = message.author.username;
-      let pollArgs = args.slice(1).join(" ");
-      let pollChannel = message.mentions.channels.first();
-      if (!pollChannel) {
+    else {
+      const pollAuthor = message.author.username;
+      const pollArgs = args.slice(1).join(" ");
+      const pollChannel = message.mentions.channels.first();
+
+      if (!pollChannel) 
         return message.channel.send("I believe that channel did not exist");
-      } else {
-        return pollChannel.send(poll.poll(pollArgs, pollWhosend));
-      }
+      else 
+        return pollChannel.send(poll.poll(pollArgs, pollAuthor));
     }
   }
   if (command === "event") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
-      return message.channel.send("You don't have permission");
+      message.delete({ timeout: 2000 });
+      return message.channel.send("You don't have permission").then(sentMessage => sentMessage.delete({ timeout: 3000 }));
     }
-    if (!args.length) {
+
+    if (!args.length) 
       return message.channel.send("What event you want to broadcast?");
-    } else {
-      let eventWhosend = message.author.username;
-      let eventArgs = args.slice(1).join(" ");
-      let eventChannel = message.mentions.channels.first();
-      if (!eventChannel) {
+    else {
+      const eventAuthor = message.author.username;
+      const eventArgs = args.slice(1).join(" ");
+      const eventChannel = message.mentions.channels.first();
+
+      if (!eventChannel)
         return message.channel.send("I believe that channel did not exist");
-      } else {
-        return eventChannel.send(event.event(eventArgs, eventWhosend));
-      }
+      else 
+        return eventChannel.send(event.event(eventArgs, eventAuthor));
     }
   }
   if (command === "search") {
-    if (!args.length) {
+    if (!args.length)
       return message.channel.send("What image you want me to search?");
-    } else {
+    else {
       message.delete();
       let searchArgs = args.slice(0).join(" ");
       var options = {
