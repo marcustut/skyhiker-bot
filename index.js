@@ -154,7 +154,8 @@ bot.on("guildMemberRemove", member => {
 
 // When the bot listened a message
 bot.on("message", async (message) => {
-  if (message[0] !== PREFIX) return;
+  // If the message doesn't startsWith PREFIX or bot is the sender
+  if (!message.content.startsWith(prefix) || message.author.bot) return;
 
   let args = message.content.substring(PREFIX.length).trim().split(" ");
   const command = args.shift().toLowerCase();
