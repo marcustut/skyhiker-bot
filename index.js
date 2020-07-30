@@ -84,6 +84,8 @@ const banners = {
   supportBanner: 'https://i.ibb.co/52jpdZJ/Support-Banner.jpg'
 };
 
+const botAvatar = 'https://i.ibb.co/z5ct5rp/shlogo.png';
+
 const accpetedReactions = ['✅'];
 
 // When the bot is online
@@ -152,6 +154,8 @@ bot.on("guildMemberRemove", member => {
 
 // When the bot listened a message
 bot.on("message", async (message) => {
+  if (message[0] !== PREFIX) return;
+
   let args = message.content.substring(PREFIX.length).trim().split(" ");
   const command = args.shift().toLowerCase();
 
@@ -523,6 +527,10 @@ bot.on("message", async (message) => {
     });
 
   }
+
+  if (command.toLowerCase() === 'setavatar') {
+    return bot.user.setAvatar(botAvatar).then(() => message.channel.send('New avatar is set.'));
+  }  
 });
 
 bot.login(discordToken);
