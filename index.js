@@ -61,32 +61,32 @@ readFiles("./src/", async (err, results) => {
 
 // Constants Vars
 const roles = {
-  memberRole: '737931806187323446',
-  staffRole: '737931806187323448'
+  memberRole: "737931806187323446",
+  staffRole: "737931806187323448",
 };
 
 const channels = {
-  welcomeChannel: '737931806221009012',
-  suggestionChannel: '737931806548033541',
-  announcementChannel: '737931806221009015',
-  eventChannel: '737931806221009017',
-  ticketChannel: '737931806548033536',
-  pollsChannel: '737931806548033538',
-  whatzupChannel: '737931806548033540'
+  welcomeChannel: "737931806221009012",
+  suggestionChannel: "737931806548033541",
+  announcementChannel: "737931806221009015",
+  eventChannel: "737931806221009017",
+  ticketChannel: "737931806548033536",
+  pollsChannel: "737931806548033538",
+  whatzupChannel: "737931806548033540",
 };
 
 const banners = {
-  skyHikerBanner: 'https://i.ibb.co/NC59c2V/Sky-Hiker-Banner.png',
-  announcementBanner: 'https://i.ibb.co/7gwF1vX/Announcement-Banner.jpg',
-  eventBanner: 'https://i.ibb.co/XxnpMqG/Event-Banner.jpg',
-  pollsBanner: 'https://i.ibb.co/zsDjBcF/Polls-Banner.jpg',
-  suggestionBanner: 'https://i.ibb.co/M59Xfbs/Suggestion-Banner.jpg',
-  supportBanner: 'https://i.ibb.co/52jpdZJ/Support-Banner.jpg'
+  skyHikerBanner: "https://i.ibb.co/NC59c2V/Sky-Hiker-Banner.png",
+  announcementBanner: "https://i.ibb.co/7gwF1vX/Announcement-Banner.jpg",
+  eventBanner: "https://i.ibb.co/XxnpMqG/Event-Banner.jpg",
+  pollsBanner: "https://i.ibb.co/zsDjBcF/Polls-Banner.jpg",
+  suggestionBanner: "https://i.ibb.co/M59Xfbs/Suggestion-Banner.jpg",
+  supportBanner: "https://i.ibb.co/52jpdZJ/Support-Banner.jpg",
 };
 
-const botAvatar = 'https://i.ibb.co/z5ct5rp/shlogo.png';
+const botAvatar = "https://i.ibb.co/z5ct5rp/shlogo.png";
 
-const accpetedReactions = ['✅'];
+const accpetedReactions = ["✅"];
 
 // When the bot is online
 bot.once("ready", async () => {
@@ -105,7 +105,9 @@ bot.on("messageReactionAdd", async (reaction, user) => {
   // If the reaction comes from Welcome Channel
   if (reaction.message.channel.id === channels.welcomeChannel) {
     if (accpetedReactions.includes(reaction.emoji.name)) {
-      await reaction.message.guild.members.cache.get(user.id).roles.add(roles.memberRole);
+      await reaction.message.guild.members.cache
+        .get(user.id)
+        .roles.add(roles.memberRole);
     }
   }
 });
@@ -122,33 +124,37 @@ bot.on("messageReactionRemove", async (reaction, user) => {
   // If the reaction comes from Welcome Channel
   if (reaction.message.channel.id === channels.welcomeChannel) {
     if (accpetedReactions.includes(reaction.emoji.name)) {
-      await reaction.message.guild.members.cache.get(user.id).roles.remove(roles.memberRole);
+      await reaction.message.guild.members.cache
+        .get(user.id)
+        .roles.remove(roles.memberRole);
     }
   }
 });
 
-bot.on("guildMemberAdd", member => {
-  const welcomePM = `============**ＳｋｙＨｉｋｅｒ**============\n` +
-                    `Dear **${member.user.tag}**,\n` +
-                    `\n**Big WELCOME to our server,**\n` +
-                    `Are you looking for others channel?\n` +
-                    `Wondering where are us?\n` +
-                    `\nHead to our <#${channels.welcomeChannel}> and go through the rules.\n` +
-                    `\nOnce you are done, react with ✅ to indicate you agree with our terms and conditions.\n` +
-                    `**#Please be __AWARE__ of the rules as we already acknowledged**\n` +
-                    `\nThank you for supporting us.\n` +
-                    `See ya soon <3\n` +
-                    `\n**𝕊𝕜𝕪ℍ𝕚𝕜𝕖𝕣**\n` +
-                    '-';
+bot.on("guildMemberAdd", (member) => {
+  const welcomePM =
+    `============**ＳｋｙＨｉｋｅｒ**============\n` +
+    `Dear **${member.user.tag}**,\n` +
+    `\n**Big WELCOME to our server,**\n` +
+    `Are you looking for others channel?\n` +
+    `Wondering where are us?\n` +
+    `\nHead to our <#${channels.welcomeChannel}> and go through the rules.\n` +
+    `\nOnce you are done, react with ✅ to indicate you agree with our terms and conditions.\n` +
+    `**#Please be __AWARE__ of the rules as we already acknowledged**\n` +
+    `\nThank you for supporting us.\n` +
+    `See ya soon <3\n` +
+    `\n**𝕊𝕜𝕪ℍ𝕚𝕜𝕖𝕣**\n` +
+    "-";
 
-  member.send(welcomePM)
-    .then(message => {
+  member
+    .send(welcomePM)
+    .then((message) => {
       console.log(`${member.user.tag} has just joined the server.`);
     })
     .catch(console.error);
 });
 
-bot.on("guildMemberRemove", member => {
+bot.on("guildMemberRemove", (member) => {
   // Send a message at somewhere when someone leaves.
 });
 
@@ -160,6 +166,7 @@ bot.on("message", async (message) => {
   let args = message.content.substring(PREFIX.length).trim().split(" ");
   const command = args.shift().toLowerCase();
 
+  // General Commands
   if (command === "help") {
     message.delete({ timeout: 2000 });
     return bot.commands.get("help").help(message, bot);
@@ -170,6 +177,60 @@ bot.on("message", async (message) => {
     return bot.commands.get("shelp").shelp(message, bot);
   }
 
+  if (command === "clear") {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
+      const clearNoPermEmbed = new Discord.MessageEmbed()
+        .setColor(0xffc300) // Golden Poppy
+        .setDescription("You don't have permission to use this command.");
+
+      message.delete({ timeout: 2000 });
+      return message.channel.send(clearNoPermEmbed).then((sentMessage) => {
+        sentMessage.delete({ timeout: 3000 });
+      });
+    }
+
+    if (!args[0]) {
+      return message
+        .reply("You didn't specify any amount.")
+        .then((sentMessage) => {
+          message.delete({ timeout: 1500 });
+          sentMessage.delete({ timeout: 3000 });
+        });
+    } else if (isNaN(args[0])) {
+      return message
+        .reply("The amount specified is not a number!")
+        .then((sentMessage) => {
+          message.delete({ timeout: 1500 });
+          sentMessage.delete({ timeout: 3000 });
+        });
+    } else if (args[0] > 100) {
+      return message
+        .reply("You can't delete more than 100 messages at once!")
+        .then((sentMessage) => {
+          message.delete({ timeout: 1500 });
+          sentMessage.delete({ timeout: 3000 });
+        });
+    } else if (args[0] < 1) {
+      return message
+        .reply("You have to delete at least one message!")
+        .then((sentMessage) => {
+          message.delete({ timeout: 1500 });
+          sentMessage.delete({ timeout: 3000 });
+        });
+    }
+    await message.channel.messages
+      .fetch({ limit: parseInt(args[0]) + 1 })
+      .then((messages) => {
+        message.channel
+          .bulkDelete(messages)
+          .then((messages) =>
+            message.channel
+              .send(`Deleted \`${messages.size - 1}\` messages.`)
+              .then((sentMessage) => sentMessage.delete({ timeout: 1500 }))
+          );
+      });
+  }
+
   // Moderation Commands
   if (command === "ban") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
@@ -177,8 +238,8 @@ bot.on("message", async (message) => {
         .setColor(0xffc300) // Golden Poppy
         .setDescription("You don't have a permission to ban a player.");
 
-      message.delete({ timeout: 2000 })
-      return message.channel.send(banNoPermEmbed).then(sentMessage => {
+      message.delete({ timeout: 2000 });
+      return message.channel.send(banNoPermEmbed).then((sentMessage) => {
         sentMessage.delete({ timeout: 3000 });
       });
     }
@@ -190,7 +251,7 @@ bot.on("message", async (message) => {
         );
 
       message.delete({ timeout: 2000 });
-      return message.channel.send(noTagEmbed).then(sentMessage => {
+      return message.channel.send(noTagEmbed).then((sentMessage) => {
         sentMessage.delete({ timeout: 3000 });
       });
     }
@@ -212,7 +273,7 @@ bot.on("message", async (message) => {
         .setDescription("You don't have a permission to unban a player.");
 
       message.delete({ timeout: 2000 });
-      return message.channel.send(banNoPermEmbed).then(sentMessage => {
+      return message.channel.send(banNoPermEmbed).then((sentMessage) => {
         sentMessage.delete({ timeout: 3000 });
       });
     }
@@ -234,11 +295,15 @@ bot.on("message", async (message) => {
   if (command === "announce") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       message.delete({ timeout: 2000 });
-      return message.channel.send("You don't have permission").then(sentMessage => sentMessage.delete({ timeout: 3000 }));
+      return message.channel
+        .send("You don't have permission")
+        .then((sentMessage) => sentMessage.delete({ timeout: 3000 }));
     }
 
-    if (!args.length) 
-      return message.channel.send(`Please use the command this way\n\n${PREFIX}announce <channel> <message>`);
+    if (!args.length)
+      return message.channel.send(
+        `Please use the command this way\n\n${PREFIX}announce <channel> <message>`
+      );
     else {
       const announcementAuthor = message.author.username;
       const announceArgs = args.slice(1).join(" ");
@@ -246,36 +311,45 @@ bot.on("message", async (message) => {
 
       if (!announceChannel)
         return message.channel.send("I believe that channel did not exist!");
-      else 
-        return announceChannel.send(announce.announce(announceArgs, announcementAuthor));
+      else
+        return announceChannel.send(
+          announce.announce(announceArgs, announcementAuthor)
+        );
     }
   }
   if (command === "poll") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       message.delete({ timeout: 2000 });
-      return message.channel.send("You don't have permission").then(sentMessage => sentMessage.delete({ timeout: 3000 }));
+      return message.channel
+        .send("You don't have permission")
+        .then((sentMessage) => sentMessage.delete({ timeout: 3000 }));
     }
 
-    if (!args.length) 
+    if (!args.length)
       return message.channel.send("What poll you want to create?");
     else {
       const pollAuthor = message.author.username;
       const pollArgs = args.slice(1).join(" ");
       const pollChannel = message.mentions.channels.first();
 
-      if (!pollChannel) 
+      if (!pollChannel) {
+        message.delete({ timeout: 2000 });
         return message.channel.send("I believe that channel did not exist");
-      else 
+      } else {
+        message.delete({ timeout: 2000 });
         return pollChannel.send(poll.poll(pollArgs, pollAuthor, botAvatar));
+      }
     }
   }
   if (command === "event") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       message.delete({ timeout: 2000 });
-      return message.channel.send("You don't have permission").then(sentMessage => sentMessage.delete({ timeout: 3000 }));
+      return message.channel
+        .send("You don't have permission")
+        .then((sentMessage) => sentMessage.delete({ timeout: 3000 }));
     }
 
-    if (!args.length) 
+    if (!args.length)
       return message.channel.send("What event you want to broadcast?");
     else {
       const eventAuthor = message.author.username;
@@ -284,8 +358,7 @@ bot.on("message", async (message) => {
 
       if (!eventChannel)
         return message.channel.send("I believe that channel did not exist");
-      else 
-        return eventChannel.send(event.event(eventArgs, eventAuthor));
+      else return eventChannel.send(event.event(eventArgs, eventAuthor));
     }
   }
   if (command === "search") {
@@ -332,17 +405,15 @@ bot.on("message", async (message) => {
     if (message.channel.id !== channels.suggestionChannel) {
       const invalidChannelEmbed = new Discord.MessageEmbed()
         .setColor(0xffc300)
-        .setTitle(
-          `Invalid Channel`
+        .setTitle(`Invalid Channel`)
+        .addField(
+          `This command is only available in <#${channels.suggestionChannel}>`
         )
-        .addField(`This command is only available in <#${channels.suggestionChannel}>`)
         .setFooter(bot.user.username, bot.user.displayAvatarURL())
         .setTimestamp();
 
-      return message.channel
-        .send(invalidChannelEmbed)
-        .then(sentMessage => {
-          sentMessage.delete({ timeout: 3000 });
+      return message.channel.send(invalidChannelEmbed).then((sentMessage) => {
+        sentMessage.delete({ timeout: 3000 });
       });
     }
     // Parsing data from template message
@@ -354,7 +425,11 @@ bot.on("message", async (message) => {
     };
 
     try {
-      const suggestionEmbed = await storeSuggestion.storeSuggestion(user, message, bot);
+      const suggestionEmbed = await storeSuggestion.storeSuggestion(
+        user,
+        message,
+        bot
+      );
 
       return message.channel.send(suggestionEmbed).then((embedMessage) => {
         message.delete({ timeout: 1000 });
@@ -363,9 +438,11 @@ bot.on("message", async (message) => {
       });
     } catch (error) {
       console.log(error.message);
-      return message.channel.send(
-        "An Error Occured\nMake sure your template is correct."
-      ).then(sentMessage => { sentMessage.delete({ timeout: 3000 }) });
+      return message.channel
+        .send("An Error Occured\nMake sure your template is correct.")
+        .then((sentMessage) => {
+          sentMessage.delete({ timeout: 3000 });
+        });
     }
   }
 
@@ -375,9 +452,11 @@ bot.on("message", async (message) => {
   ) {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       message.delete({ timeout: 2000 });
-      return message.channel.send(
-        "You have no permission to use this command."
-      ).then(sentMessage => { sentMessage.delete({ timeout: 3000 }) });
+      return message.channel
+        .send("You have no permission to use this command.")
+        .then((sentMessage) => {
+          sentMessage.delete({ timeout: 3000 });
+        });
     }
 
     const isApprove = message.content
@@ -404,56 +483,78 @@ bot.on("message", async (message) => {
     } catch (error) {
       console.log(error.message);
       message.delete({ timeout: 2000 });
-      return message.channel.send(
-        "An Error Occured\nPlease contact the Dev Team."
-      ).then(sentMessage => { sentMessage.delete({ timeout: 3000 }) });
+      return message.channel
+        .send("An Error Occured\nPlease contact the Dev Team.")
+        .then((sentMessage) => {
+          sentMessage.delete({ timeout: 3000 });
+        });
     }
   }
 
-  if (command.toLowerCase() === 'addwelcomemsg') {
+  if (command.toLowerCase() === "addwelcomemsg") {
     const addWelcomeEmbed = new Discord.MessageEmbed()
       .setTitle("WELCOME TO SKYHIKER 🎉")
       .setColor(0xffc300)
-      .setDescription("We're excited to have you with us here in our Discord Server! Read the rules to start communicating with others.")
-      .addField("⚠GENERAL RULES⚠", ":small_blue_diamond: **All Discord users must be 13 or above aged** per the Discord terms of service.\n" + 
-                                    ":small_blue_diamond: **No inappropriate or offensive** usernames, languages statuses or profile pictures. You may be asked to change these.\n" + 
-                                    ":small_blue_diamond: **No harassment of other players.** Racism, sexism, xenophobia, transphobia, homophobia, misogyny, etc. are never allowed.\n" +
-                                    ":small_blue_diamond: **All text channels are English only.** Staff must be able to read all messages sent here.\n" +
-                                    ":small_blue_diamond: **No impersonation of other users**, famous personalities, Skyhiker staff.\n" +
-                                    ":small_blue_diamond: **Remain respectful** of others at all times." +
-                                    ":small_blue_diamond: **Don't evade filters.** This applies to both words and links. If something is censored, it is censored for a reason!")
-      .addField("\u200b", ":warning: If you choose to break these rules you'll be asked to stop or kicked from the server. Breaking any of these rules may also result in a ban. But follow these few simple guidelines and we'll all have a good time!\n")
+      .setDescription(
+        "We're excited to have you with us here in our Discord Server! Read the rules to start communicating with others."
+      )
+      .addField(
+        "⚠GENERAL RULES⚠",
+        ":small_blue_diamond: **All Discord users must be 13 or above aged** per the Discord terms of service.\n" +
+          ":small_blue_diamond: **No inappropriate or offensive** usernames, languages statuses or profile pictures. You may be asked to change these.\n" +
+          ":small_blue_diamond: **No harassment of other players.** Racism, sexism, xenophobia, transphobia, homophobia, misogyny, etc. are never allowed.\n" +
+          ":small_blue_diamond: **All text channels are English only.** Staff must be able to read all messages sent here.\n" +
+          ":small_blue_diamond: **No impersonation of other users**, famous personalities, Skyhiker staff.\n" +
+          ":small_blue_diamond: **Remain respectful** of others at all times." +
+          ":small_blue_diamond: **Don't evade filters.** This applies to both words and links. If something is censored, it is censored for a reason!"
+      )
+      .addField(
+        "\u200b",
+        ":warning: If you choose to break these rules you'll be asked to stop or kicked from the server. Breaking any of these rules may also result in a ban. But follow these few simple guidelines and we'll all have a good time!\n"
+      )
       .addField("\u200b", "👇 CLICK THE EMOJI IF YOU ACCEPT THE RULES")
       .setImage(banners.skyHikerBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 
-    return bot.channels.fetch(channels.welcomeChannel).then(welcomeChannel => {
-      message.delete({ timeout: 2000 });
-      welcomeChannel.send(addWelcomeEmbed).then(embedMessage => {
-        embedMessage.react("✅");
+    return bot.channels
+      .fetch(channels.welcomeChannel)
+      .then((welcomeChannel) => {
+        message.delete({ timeout: 2000 });
+        welcomeChannel.send(addWelcomeEmbed).then((embedMessage) => {
+          embedMessage.react("✅");
+        });
       });
-    });
   }
 
-  if (command.toLowerCase() === 'addsuggestionmsg') {
+  if (command.toLowerCase() === "addsuggestionmsg") {
     const addSuggestionEmbed = new Discord.MessageEmbed()
       .setTitle("SUGGESTION 💭")
       .setColor(0xffc300)
-      .setDescription("**We welcome any reasonable and suitable suggestions**\nPlease use the following template to write your suggestion.")
-      .addField("\u200B", "```\n;suggestion\nIGN: \nSuggestion: \nReason: \n```")
-      .addField("\u200B", "**Staff will respond to your suggestions within 3 days**")
+      .setDescription(
+        "**We welcome any reasonable and suitable suggestions**\nPlease use the following template to write your suggestion."
+      )
+      .addField(
+        "\u200B",
+        "```\n;suggestion\nIGN: \nSuggestion: \nReason: \n```"
+      )
+      .addField(
+        "\u200B",
+        "**Staff will respond to your suggestions within 3 days**"
+      )
       .setImage(banners.suggestionBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 
-    return bot.channels.fetch(channels.suggestionChannel).then(suggestionChannel => {
-      message.delete({ timeout: 2000 });
-      suggestionChannel.send(addSuggestionEmbed);
-    });
+    return bot.channels
+      .fetch(channels.suggestionChannel)
+      .then((suggestionChannel) => {
+        message.delete({ timeout: 2000 });
+        suggestionChannel.send(addSuggestionEmbed);
+      });
   }
 
-  if (command.toLowerCase() === 'addpollsmsg') {
+  if (command.toLowerCase() === "addpollsmsg") {
     const addPollsEmbed = new Discord.MessageEmbed()
       .setTitle("POLLS 📊")
       .setColor(0xffc300)
@@ -462,46 +563,55 @@ bot.on("message", async (message) => {
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 
-    return bot.channels.fetch(channels.pollsChannel).then(pollsChannel => {
+    return bot.channels.fetch(channels.pollsChannel).then((pollsChannel) => {
       message.delete({ timeout: 2000 });
       pollsChannel.send(addPollsEmbed);
     });
   }
 
-  if (command.toLowerCase() === 'addsupportmsg') {
+  if (command.toLowerCase() === "addsupportmsg") {
     const addSupportEmbed = new Discord.MessageEmbed()
       .setTitle("SUPPORT 📬")
       .setColor(0xffc300)
-      .addField("**Report Player Format**", "```\nYour IGN: \nPlayer: \nReason: \n```")
+      .addField(
+        "**Report Player Format**",
+        "```\nYour IGN: \nPlayer: \nReason: \n```"
+      )
       .addField("**Server Issue Format**", "```\nYour IGN: \nIssue: \n```")
       .addField("**Enquiries Format**", "```\nYour IGN: \nQuestion: \n```")
-      .addField("⚠FOLLOW THIS FORMAT⚠", "🔹 **You won't get any support if you didn't follow this format** and the Staff team have rights to close your ticket submission!")
+      .addField(
+        "⚠FOLLOW THIS FORMAT⚠",
+        "🔹 **You won't get any support if you didn't follow this format** and the Staff team have rights to close your ticket submission!"
+      )
       .setImage(banners.supportBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 
-    return bot.channels.fetch(channels.ticketChannel).then(ticketChannel => {
+    return bot.channels.fetch(channels.ticketChannel).then((ticketChannel) => {
       message.delete({ timeout: 2000 });
       ticketChannel.send(addSupportEmbed);
     });
   }
 
-  if (command.toLowerCase() === 'addeventmsg') {
+  if (command.toLowerCase() === "addeventmsg") {
     const addEventEmbed = new Discord.MessageEmbed()
       .setTitle("EVENT 🎊")
       .setColor(0xffc300)
-      .addField("**STAY TUNE**", "There are a lot of events in the server!\nParticipate and get a chance to win yourself a Legendary Loot! 🎁")
+      .addField(
+        "**STAY TUNE**",
+        "There are a lot of events in the server!\nParticipate and get a chance to win yourself a Legendary Loot! 🎁"
+      )
       .setImage(banners.eventBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 
-    return bot.channels.fetch(channels.eventChannel).then(eventChannel => {
+    return bot.channels.fetch(channels.eventChannel).then((eventChannel) => {
       message.delete({ timeout: 2000 });
       eventChannel.send(addEventEmbed);
     });
   }
 
-  if (command.toLowerCase() === 'addannouncementmsg') {
+  if (command.toLowerCase() === "addannouncementmsg") {
     const addAnnouncementEmbed = new Discord.MessageEmbed()
       .setTitle("ANNOUNCEMENT 📢")
       .setColor(0xffc300)
@@ -510,13 +620,15 @@ bot.on("message", async (message) => {
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 
-    return bot.channels.fetch(channels.announcementChannel).then(announcementChannel => {
-      message.delete({ timeout: 2000 });
-      announcementChannel.send(addAnnouncementEmbed);
-    });
+    return bot.channels
+      .fetch(channels.announcementChannel)
+      .then((announcementChannel) => {
+        message.delete({ timeout: 2000 });
+        announcementChannel.send(addAnnouncementEmbed);
+      });
   }
 
-  if (command.toLowerCase() === 'addwhatzupmsg') {
+  if (command.toLowerCase() === "addwhatzupmsg") {
     const addWhatzUpEmbed = new Discord.MessageEmbed()
       .setTitle("WHATZ-UP 💬")
       .setColor(0xffc300)
@@ -524,16 +636,19 @@ bot.on("message", async (message) => {
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 
-    return bot.channels.fetch(channels.whatzupChannel).then(whatzupChannel => {
-      message.delete({ timeout: 2000 });
-      whatzupChannel.send(addWhatzUpEmbed);
-    });
-
+    return bot.channels
+      .fetch(channels.whatzupChannel)
+      .then((whatzupChannel) => {
+        message.delete({ timeout: 2000 });
+        whatzupChannel.send(addWhatzUpEmbed);
+      });
   }
 
-  if (command.toLowerCase() === 'setavatar') {
-    return bot.user.setAvatar(botAvatar).then(() => message.channel.send('New avatar is set.'));
-  }  
+  if (command.toLowerCase() === "setavatar") {
+    return bot.user
+      .setAvatar(botAvatar)
+      .then(() => message.channel.send("New avatar is set."));
+  }
 });
 
 bot.login(discordToken);
