@@ -5,7 +5,7 @@ module.exports = {
   description: "To create a poll.",
   poll: (args, pollAuthor, botAvatar) => {
     const pollEmbed = new MessageEmbed()
-      .setAuthor("**NEW POLL**", botAvatar)
+      .setAuthor("——  𝓟𝓸𝓵𝓵  ——", botAvatar)
       .setDescription(args)
       .setColor(0xffc300)
       .setFooter(pollAuthor)
