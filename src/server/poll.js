@@ -3,9 +3,9 @@ const { MessageEmbed } = require("discord.js");
 module.exports = {
   name: "poll",
   description: "To create a poll.",
-  poll: (args, pollAuthor, skyHikerBanner) => {
+  poll: (args, pollAuthor, botAvatar) => {
     const pollEmbed = new MessageEmbed()
-      .setAuthor("**NEW POLL**", skyHikerBanner)
+      .setAuthor("**NEW POLL**", botAvatar)
       .setDescription(args)
       .setColor(0xffc300)
       .setFooter(pollAuthor)
