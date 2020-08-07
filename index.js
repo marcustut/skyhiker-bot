@@ -266,7 +266,7 @@ bot.on("message", async (message) => {
       if (!pollChannel) 
         return message.channel.send("I believe that channel did not exist");
       else 
-        return pollChannel.send(poll.poll(pollArgs, pollAuthor));
+        return pollChannel.send(poll.poll(pollArgs, pollAuthor, skyHikerBanner));
     }
   }
   if (command === "event") {
