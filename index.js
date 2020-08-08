@@ -173,6 +173,17 @@ bot.on("message", async (message) => {
   }
 
   if (command === "shelp") {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
+      const shelpNoPermEmbed = new Discord.MessageEmbed()
+        .setColor(0xffc300) // Golden Poppy
+        .setDescription("You don't have permission to use this command.");
+
+      message.delete({ timeout: 2000 });
+      return message.channel.send(shelpNoPermEmbed).then((sentMessage) => {
+        sentMessage.delete({ timeout: 3000 });
+      });
+    }
+
     message.delete({ timeout: 2000 });
     return bot.commands.get("shelp").shelp(message, bot);
   }
