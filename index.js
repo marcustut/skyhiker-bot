@@ -254,21 +254,31 @@ bot.on("message", async (message) => {
         sentMessage.delete({ timeout: 3000 });
       });
     }
-    if (!message.mentions.members.first()) {
-      const noTagEmbed = new Discord.MessageEmbed()
-        .setColor(0xffc300) // Golden Poppy
-        .setDescription(
-          "Please specify who you want to ban with '@' followed by his/her name."
-        );
 
-      message.delete({ timeout: 2000 });
-      return message.channel.send(noTagEmbed).then((sentMessage) => {
-        sentMessage.delete({ timeout: 3000 });
-      });
+    let user = message.mentions.members.first();
+
+    if (!user) {
+      try {
+        if (!message.guild.members.fetch(args.slice(0)[0])) throw new Error("Couldn't get a Discord User with this User ID.");
+
+        user = message.guild.members.fetch(args.slice(0)[0]);
+      } catch (error) {
+        console.log(error);
+        const noTagEmbed = new Discord.MessageEmbed()
+          .setColor(0xffc300) // Golden Poppy
+          .setDescription(
+            "Please specify who you want to ban with '@' followed by his/her name."
+          );
+
+        message.delete({ timeout: 2000 });
+        return message.channel.send(noTagEmbed).then((sentMessage) => {
+          sentMessage.delete({ timeout: 3000 });
+        });
+      }
     }
 
     const options = {
-      banUser: message.mentions.members.first(),
+      banUser: user,
       banDuration: parseInt(args.slice(1)[0]),
       banReason: args.slice(2).join(" "),
     };
