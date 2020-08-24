@@ -1,4 +1,5 @@
 const { MessageEmbed } = require("discord.js");
+const { embedColor } = require("../constants");
 
 module.exports = {
   name: "shelp",
@@ -6,7 +7,7 @@ module.exports = {
   shelp: (message, bot) => {
     const shelpEmbed = new MessageEmbed()
       .setAuthor(bot.user.username, bot.user.displayAvatarURL())
-      .setColor(0xffc300)
+      .setColor(embedColor)
       .setTitle(
         "📕 SkyHiker Bot's list of commands (For Staffs)"
       )

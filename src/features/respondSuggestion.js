@@ -21,7 +21,7 @@ module.exports = {
     // Creating a Embed reply to user
     const respondEmbed = new MessageEmbed()
       .setAuthor(suggestion.userTag, suggestion.userAvatar)
-      .setColor(0xffc300)
+      .setColor(0xe3fff4) // Light Green
       .setTitle(
         `Suggestion #${userArgs.suggestionID} ${
           approve ? "Approved" : "Denied"

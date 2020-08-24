@@ -1,0 +1,35 @@
+// Constants for use
+module.exports = {
+  roles: {
+    memberRole: "737931806187323446",
+    staffRole: "737931806187323448",
+  },
+  channels: {
+    welcomeChannel: "737931806221009012",
+    suggestionChannel: "737931806548033541",
+    announcementChannel: "737931806221009015",
+    eventChannel: "737931806221009017",
+    ticketChannel: "737931806548033536",
+    pollsChannel: "737931806548033538",
+    whatzupChannel: "737931806548033540",
+    verificationChannel: "747389603425681450",
+    updateChannel: "743677676929286276",
+    rewardChannel: "742681818079166545",
+    roleallocationChannel: "743679442806767706",
+  },
+  banners: {
+    skyHikerBanner: "https://i.ibb.co/NC59c2V/Sky-Hiker-Banner.png",
+    announcementBanner: "https://i.ibb.co/7gwF1vX/Announcement-Banner.jpg",
+    eventBanner: "https://i.ibb.co/XxnpMqG/Event-Banner.jpg",
+    pollsBanner: "https://i.ibb.co/zsDjBcF/Polls-Banner.jpg",
+    suggestionBanner: "https://i.ibb.co/M59Xfbs/Suggestion-Banner.jpg",
+    supportBanner: "https://i.ibb.co/52jpdZJ/Support-Banner.jpg",
+    updateBanner: "https://ibb.co/371FRng",
+    rewardBanner: "https://ibb.co/ryqsvdV",
+    roleallocationBanner: "https://ibb.co/JxnyqnV",
+  },
+  botAvatar: "https://i.ibb.co/z5ct5rp/shlogo.png",
+  serverIcon: "https://ibb.co/ZL7Bb0x",
+  accpetedReactions: ["✅"],
+  embedColor: "0xd6f8ff",
+};

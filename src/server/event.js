@@ -1,13 +1,14 @@
 const { MessageEmbed } = require("discord.js");
+const { embedColor } = require("../../constants");
 
 module.exports = {
   name: "event",
   description: "To create an event.",
   event: (args, eventAuthor) => {
     const eventEmbed = new MessageEmbed()
-      .setAuthor("**NEW EVENT**", "https://i.imgur.com/zpB4dbi.png")
+      .setTitle("————===========**ＳｋｙＨｉｋｅｒ**===========———— \n                                           ————__**ᴇᴠᴇɴᴛ**__————")
       .setDescription(args)
-      .setColor(0xffc300)
+      .setColor(embedColor)
       .setFooter(eventAuthor)
       .setTimestamp();
 

@@ -12,12 +12,23 @@ const request = require("request");
 const announce = require("./src/server/announce");
 const poll = require("./src/server/poll");
 const event = require("./src/server/event");
+const update = require("./src/server/update");
 const storeSuggestion = require("./src/features/storeSuggestion");
 const respondSuggestion = require("./src/features/respondSuggestion");
 
-// Getting Environment Variables
-const PREFIX = process.env.BOT_PREFIX;
-const discordToken = process.env.BOT_TOKEN;
+// Discord Config
+const { PREFIX, discordToken } = require("./config");
+
+// Constants
+const {
+  roles,
+  channels,
+  banners,
+  botAvatar,
+  serverIcon,
+  accpetedReactions,
+  embedColor,
+} = require("./constants");
 
 // Commands Handler
 const fs = require("fs");
@@ -58,46 +69,6 @@ readFiles("./src/", async (err, results) => {
     bot.commands.set(command.name, command);
   }
 });
-
-// Constants Vars
-const roles = {
-  memberRole: "737931806187323446",
-  staffRole: "737931806187323448",
-};
-
-const channels = {
-  welcomeChannel: "737931806221009012",
-  suggestionChannel: "737931806548033541",
-  announcementChannel: "737931806221009015",
-  eventChannel: "737931806221009017",
-  ticketChannel: "737931806548033536",
-  pollsChannel: "737931806548033538",
-  whatzupChannel: "737931806548033540",
-  verificationChannel: "747389603425681450",
-  updateChannel: "743677676929286276",
-  rewardChannel: "742681818079166545",
-  roleallocationChannel: "743679442806767706",
-};
-
-const banners = {
-  skyHikerBanner: "https://i.ibb.co/NC59c2V/Sky-Hiker-Banner.png",
-  announcementBanner: "https://i.ibb.co/7gwF1vX/Announcement-Banner.jpg",
-  eventBanner: "https://i.ibb.co/XxnpMqG/Event-Banner.jpg",
-  pollsBanner: "https://i.ibb.co/zsDjBcF/Polls-Banner.jpg",
-  suggestionBanner: "https://i.ibb.co/M59Xfbs/Suggestion-Banner.jpg",
-  supportBanner: "https://i.ibb.co/52jpdZJ/Support-Banner.jpg",
-  updateBanner: "https://ibb.co/371FRng",
-  rewardBanner: "https://ibb.co/ryqsvdV",
-  roleallocationBanner: "https://ibb.co/JxnyqnV",
-};
-
-const botAvatar = "https://i.ibb.co/z5ct5rp/shlogo.png";
-
-const serverIcon = "https://ibb.co/ZL7Bb0x";
-
-const accpetedReactions = ["✅"];
-
-const embedColor = '0xd6f8ff';
 
 // When the bot is online
 bot.once("ready", async () => {
@@ -156,9 +127,14 @@ bot.on("messageReactionRemove", async (reaction, user) => {
         .then((unverifiedMember) => {
           const unverifiedMemberEmbed = new Discord.MessageEmbed()
             .setColor(0xe00000) // Red
-            .setAuthor(unverifiedMember.user.tag, unverifiedMember.user.displayAvatarURL())
+            .setAuthor(
+              unverifiedMember.user.tag,
+              unverifiedMember.user.displayAvatarURL()
+            )
             .setTitle(`${unverifiedMember.user.tag}`)
-            .setDescription(`📤 <@${unverifiedMember.user.id}> **is now unverified 😢**`)
+            .setDescription(
+              `📤 <@${unverifiedMember.user.id}> **is now unverified 😢**`
+            )
             .setTimestamp()
             .setThumbnail(unverifiedMember.user.displayAvatarURL());
 
@@ -216,7 +192,7 @@ bot.on("message", async (message) => {
   if (command === "shelp") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       const shelpNoPermEmbed = new Discord.MessageEmbed()
-        .setColor(embedColor) 
+        .setColor(embedColor)
         .setDescription("You don't have permission to use this command.");
 
       message.delete({ timeout: 2000 });
@@ -232,7 +208,7 @@ bot.on("message", async (message) => {
   if (command === "clear") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       const clearNoPermEmbed = new Discord.MessageEmbed()
-        .setColor(embedColor) 
+        .setColor(embedColor)
         .setDescription("You don't have permission to use this command.");
 
       message.delete({ timeout: 2000 });
@@ -287,7 +263,7 @@ bot.on("message", async (message) => {
   if (command === "ban") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       const banNoPermEmbed = new Discord.MessageEmbed()
-        .setColor(embedColor) 
+        .setColor(embedColor)
         .setDescription("You don't have a permission to ban a player.");
 
       message.delete({ timeout: 2000 });
@@ -307,7 +283,7 @@ bot.on("message", async (message) => {
       } catch (error) {
         console.log(error);
         const noTagEmbed = new Discord.MessageEmbed()
-          .setColor(embedColor) 
+          .setColor(embedColor)
           .setDescription("**Couldn't get a Discord User with this User ID.**");
 
         message.delete({ timeout: 2000 });
@@ -330,7 +306,7 @@ bot.on("message", async (message) => {
   if (command === "unban") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       const banNoPermEmbed = new Discord.MessageEmbed()
-        .setColor(embedColor) 
+        .setColor(embedColor)
         .setDescription("You don't have a permission to unban a player.");
 
       message.delete({ timeout: 2000 });
@@ -370,14 +346,18 @@ bot.on("message", async (message) => {
       const announceArgs = args.slice(1).join(" ");
       const announceChannel = message.mentions.channels.first();
 
-      if (!announceChannel)
+      if (!announceChannel) {
+        message.delete({ timeout: 2000 });
         return message.channel.send("I believe that channel did not exist!");
-      else
+      } else {
+        message.delete({ timeout: 2000 });
         return announceChannel.send(
           announce.announce(announceArgs, announcementAuthor)
         );
+      }
     }
   }
+
   if (command === "poll") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       message.delete({ timeout: 2000 });
@@ -402,6 +382,7 @@ bot.on("message", async (message) => {
       }
     }
   }
+
   if (command === "event") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       message.delete({ timeout: 2000 });
@@ -417,11 +398,41 @@ bot.on("message", async (message) => {
       const eventArgs = args.slice(1).join(" ");
       const eventChannel = message.mentions.channels.first();
 
-      if (!eventChannel)
+      if (!eventChannel) {
+        message.delete({ timeout: 2000 });
         return message.channel.send("I believe that channel did not exist");
-      else return eventChannel.send(event.event(eventArgs, eventAuthor));
+      } else {
+        message.delete({ timeout: 2000 });
+        return eventChannel.send(event.event(eventArgs, eventAuthor));
+      }
     }
   }
+
+  if (command === "update") {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
+      message.delete({ timeout: 2000 });
+      return message.channel
+        .send("You don't have permission")
+        .then((sentMessage) => sentMessage.delete({ timeout: 3000 }));
+    }
+
+    if (!args.length)
+      return message.channel.send("What event you want to broadcast?");
+    else {
+      const updateAuthor = message.author.username;
+      const updateArgs = args.slice(1).join(" ");
+      const updateChannel = message.mentions.channels.first();
+
+      if (!updateChannel) {
+        message.delete({ timeout: 2000 });
+        return message.channel.send("I believe that channel did not exist");
+      } else {
+        message.delete({ timeout: 2000 });
+        return updateChannel.send(update.update(updateArgs, updateAuthor));
+      }
+    }
+  }
+
   if (command === "search") {
     if (!args.length)
       return message.channel.send("What image you want me to search?");
@@ -558,20 +569,19 @@ bot.on("message", async (message) => {
       .setThumbnail(serverIcon)
       .setColor(embedColor)
       .setDescription(
-        "We're excited to have you with us here in our Discord Server! Kindly acknowledgement to the rules and join us."
+        "We're excited see you here with us! Kindly go through to the rules before joining."
       )
       .addField(
         "                            __**GENERAL RULES**__ \n\n" +
-        "۰ **Be Nice and respectful** \n      -- No inappropriate or offensive users' information and languages. \n\n" +
-        "۰ **No sensitive topics** \n      -- Such as sexually explicit, racism, sexism, xenophobia, offensiveness, politics content. \n\n" +
-        "۰ **International language only** \n      -- Kindly respect and make allowance for others. \n\n" +
-        "۰ **Credit reliable** \n      -- Advertisement, Scamming, Spamming and Harassment are not allowed. \n\n" +
-        "۰ **Punishments application** \n      -- Staff has the rights to give punishments based on their judgement. ", "\u200b"
+          "۰ **Be Nice and respectful** \n      -- No inappropriate or offensive users' information and languages. \n\n" +
+          "۰ **No sensitive topics** \n      -- EG. sexually explicit, racism, sexism, xenophobia, politics content. \n\n" +
+          "۰ **International language only** \n      -- Kindly respect and make allowance for others. \n\n" +
+          "۰ **Credit reliable** \n      -- Advertisement, Scamming, Spamming and Harassment are not allowed. \n\n" +
+          "۰ **Punishments application** \n      -- Staff has the rights to held every cases. "
       )
       .addField(
         "\u200b",
-        "۰ __**Kindly remain respectful to each others**__ \n" +
-        ":warning: Breach of ruels will lead to punishments.\n"
+        "۰ __**Kindly remain respectful to each others**__ \n"
       )
       .addField("\u200b", "✒️ CLICK TO ACCEPT THE T&C STATED.")
       .setImage(banners.skyHikerBanner)
@@ -638,14 +648,8 @@ bot.on("message", async (message) => {
         "**Report Player Format**",
         "```\nYour IGN: \nPlayer: \nReason: \n```"
       )
-      .addField(
-        "**Server Issue Format**", 
-        "```\nYour IGN: \nIssue: \n```"
-      )
-      .addField(
-        "**Enquiries Format**", 
-        "```\nYour IGN: \nQuestion: \n```"
-      )
+      .addField("**Server Issue Format**", "```\nYour IGN: \nIssue: \n```")
+      .addField("**Enquiries Format**", "```\nYour IGN: \nQuestion: \n```")
       .addField(
         " ",
         "#**Kindly __Follow__ the format given**, or else staff will close the ticket.#"
@@ -704,12 +708,10 @@ bot.on("message", async (message) => {
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 
-    return bot.channels
-      .fetch(channels.updateChannel)
-      .then((updateChannel) => {
-        message.delete({ timeout: 2000 });
-        updateChannel.send(addUpdateEmbed);
-      });
+    return bot.channels.fetch(channels.updateChannel).then((updateChannel) => {
+      message.delete({ timeout: 2000 });
+      updateChannel.send(addUpdateEmbed);
+    });
   }
 
   if (command.toLowerCase() === "addrewardmsg") {
@@ -721,12 +723,10 @@ bot.on("message", async (message) => {
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 
-    return bot.channels
-      .fetch(channels.rewardChannel)
-      .then((rewardChannel) => {
-        message.delete({ timeout: 2000 });
-        rewardChannel.send(addRewardEmbed);
-      });
+    return bot.channels.fetch(channels.rewardChannel).then((rewardChannel) => {
+      message.delete({ timeout: 2000 });
+      rewardChannel.send(addRewardEmbed);
+    });
   }
 
   if (command.toLowerCase() === "addroleallocationmsg") {
@@ -766,6 +766,11 @@ bot.on("message", async (message) => {
     return bot.user
       .setAvatar(botAvatar)
       .then(() => message.channel.send("New avatar is set."));
+  }
+
+  if (message.content.startsWith(PREFIX)) {
+    message.delete({ timeout: 2000 });
+    return message.channel.send("**Invalid command**\nKindly check `;help` for the list of commands.");
   }
 });
 

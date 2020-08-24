@@ -32,7 +32,7 @@ module.exports = {
         discordMessage.author.tag,
         discordMessage.author.displayAvatarURL()
       )
-      .setColor(0xffc300)
+      .setColor(0xe3fff4) // Light Green
       .setTitle(`Suggestion #${commandsDoc.data().suggestionsCount + 1}`)
       .setDescription(
         `IGN: ${user.IGN}\nSuggestion: ${user.suggestion}\nReason: ${user.reason}`
