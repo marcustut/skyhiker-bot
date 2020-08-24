@@ -771,7 +771,7 @@ bot.on("message", async (message) => {
   // Invalid Command
   if (message.content.startsWith(PREFIX) && !(command in bot.commands)) {
     message.delete({ timeout: 2000 });
-    return message.channel.send("**Invalid command**\nKindly check `;help` for the list of commands.");
+    return message.channel.send(`**\`${command}\` is an invalid command**\nKindly check \`;help\` for the list of commands.`);
   }
 });
 
