@@ -73,6 +73,10 @@ const channels = {
   ticketChannel: "737931806548033536",
   pollsChannel: "737931806548033538",
   whatzupChannel: "737931806548033540",
+  verificationChannel: "747389603425681450",
+  updateChannel: "743677676929286276",
+  rewardChannel: "742681818079166545",
+  roleallocationChannel: "743679442806767706",
 };
 
 const banners = {
@@ -82,11 +86,18 @@ const banners = {
   pollsBanner: "https://i.ibb.co/zsDjBcF/Polls-Banner.jpg",
   suggestionBanner: "https://i.ibb.co/M59Xfbs/Suggestion-Banner.jpg",
   supportBanner: "https://i.ibb.co/52jpdZJ/Support-Banner.jpg",
+  updateBanner: "https://ibb.co/371FRng",
+  rewardBanner: "https://ibb.co/ryqsvdV",
+  roleallocationBanner: "https://ibb.co/JxnyqnV",
 };
 
 const botAvatar = "https://i.ibb.co/z5ct5rp/shlogo.png";
 
+const serverIcon = "https://ibb.co/ZL7Bb0x";
+
 const accpetedReactions = ["✅"];
+
+const embedColor = '0xd6f8ff';
 
 // When the bot is online
 bot.once("ready", async () => {
@@ -107,7 +118,22 @@ bot.on("messageReactionAdd", async (reaction, user) => {
     if (accpetedReactions.includes(reaction.emoji.name)) {
       await reaction.message.guild.members.cache
         .get(user.id)
-        .roles.add(roles.memberRole);
+        .roles.add(roles.memberRole)
+        .then((newMember) => {
+          const newMemberEmbed = new Discord.MessageEmbed()
+            .setColor(0x00ed1c) // Green
+            .setAuthor(newMember.user.tag, newMember.user.displayAvatarURL())
+            .setTitle(`${newMember.user.tag}`)
+            .setDescription(`✅ <@${newMember.user.id}> **is now verifed!**`)
+            .setTimestamp()
+            .setThumbnail(newMember.user.displayAvatarURL());
+
+          return bot.channels
+            .fetch(channels.verificationChannel)
+            .then((verificationChannel) =>
+              verificationChannel.send(newMemberEmbed)
+            );
+        });
     }
   }
 });
@@ -126,7 +152,22 @@ bot.on("messageReactionRemove", async (reaction, user) => {
     if (accpetedReactions.includes(reaction.emoji.name)) {
       await reaction.message.guild.members.cache
         .get(user.id)
-        .roles.remove(roles.memberRole);
+        .roles.remove(roles.memberRole)
+        .then((unverifiedMember) => {
+          const unverifiedMemberEmbed = new Discord.MessageEmbed()
+            .setColor(0xe00000) // Red
+            .setAuthor(unverifiedMember.user.tag, unverifiedMember.user.displayAvatarURL())
+            .setTitle(`${unverifiedMember.user.tag}`)
+            .setDescription(`📤 <@${unverifiedMember.user.id}> **is now unverified 😢**`)
+            .setTimestamp()
+            .setThumbnail(unverifiedMember.user.displayAvatarURL());
+
+          return bot.channels
+            .fetch(channels.verificationChannel)
+            .then((verificationChannel) =>
+              verificationChannel.send(unverifiedMemberEmbed)
+            );
+        });
     }
   }
 });
@@ -135,12 +176,12 @@ bot.on("guildMemberAdd", (member) => {
   const welcomePM =
     `============**ＳｋｙＨｉｋｅｒ**============\n` +
     `Dear **${member.user.tag}**,\n` +
-    `\n**Big WELCOME to our server,**\n` +
+    `\n*Big WELCOME to our server,*\n` +
     `Are you looking for others channel?\n` +
     `Wondering where are us?\n` +
     `\nHead to our <#${channels.welcomeChannel}> and go through the rules.\n` +
     `\nOnce you are done, react with ✅ to indicate you agree with our terms and conditions.\n` +
-    `**#Please be __AWARE__ of the rules as we already acknowledged**\n` +
+    `*#Please **be __AWARE__** of the rules as we already acknowledged*\n` +
     `\nThank you for supporting us.\n` +
     `See ya soon <3\n` +
     `\n**𝕊𝕜𝕪ℍ𝕚𝕜𝕖𝕣**\n` +
@@ -175,7 +216,7 @@ bot.on("message", async (message) => {
   if (command === "shelp") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       const shelpNoPermEmbed = new Discord.MessageEmbed()
-        .setColor(0xffc300) // Golden Poppy
+        .setColor(embedColor) 
         .setDescription("You don't have permission to use this command.");
 
       message.delete({ timeout: 2000 });
@@ -191,7 +232,7 @@ bot.on("message", async (message) => {
   if (command === "clear") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       const clearNoPermEmbed = new Discord.MessageEmbed()
-        .setColor(0xffc300) // Golden Poppy
+        .setColor(embedColor) 
         .setDescription("You don't have permission to use this command.");
 
       message.delete({ timeout: 2000 });
@@ -246,7 +287,7 @@ bot.on("message", async (message) => {
   if (command === "ban") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       const banNoPermEmbed = new Discord.MessageEmbed()
-        .setColor(0xffc300) // Golden Poppy
+        .setColor(embedColor) 
         .setDescription("You don't have a permission to ban a player.");
 
       message.delete({ timeout: 2000 });
@@ -259,16 +300,15 @@ bot.on("message", async (message) => {
 
     if (!user) {
       try {
-        if (!message.guild.members.fetch(args.slice(0)[0])) throw new Error("Couldn't get a Discord User with this User ID.");
+        if (!(await message.guild.members.fetch(args.slice(0)[0])))
+          throw new Error("Couldn't get a Discord User with this User ID.");
 
-        user = message.guild.members.fetch(args.slice(0)[0]);
+        user = await message.guild.members.fetch(args.slice(0)[0]);
       } catch (error) {
         console.log(error);
         const noTagEmbed = new Discord.MessageEmbed()
-          .setColor(0xffc300) // Golden Poppy
-          .setDescription(
-            "Please specify who you want to ban with '@' followed by his/her name."
-          );
+          .setColor(embedColor) 
+          .setDescription("**Couldn't get a Discord User with this User ID.**");
 
         message.delete({ timeout: 2000 });
         return message.channel.send(noTagEmbed).then((sentMessage) => {
@@ -290,7 +330,7 @@ bot.on("message", async (message) => {
   if (command === "unban") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       const banNoPermEmbed = new Discord.MessageEmbed()
-        .setColor(0xffc300) // Golden Poppy
+        .setColor(embedColor) 
         .setDescription("You don't have a permission to unban a player.");
 
       message.delete({ timeout: 2000 });
@@ -301,7 +341,7 @@ bot.on("message", async (message) => {
 
     const options = {
       unbanUserID: args[0].startsWith("<") ? args[0].slice(3, -1) : args[0],
-      unbanReason: args.slice(1).join(" ").trim(),
+      unbanReason: args[1] ? args.slice(1).join(" ").trim() : "No Reason.",
     };
 
     message.delete({ timeout: 2000 });
@@ -415,7 +455,7 @@ bot.on("message", async (message) => {
         let imageChannel = bot.channels.cache.get("737931806548033542");
         const searchEmbed = new Discord.MessageEmbed()
           .setImage(urls[Math.floor(Math.random() * urls.length)])
-          .setColor(0xffc300)
+          .setColor(embedColor)
           .setFooter(message.author.username)
           .setTimestamp();
         imageChannel.send(searchEmbed);
@@ -425,7 +465,7 @@ bot.on("message", async (message) => {
   if (message.content.substring(PREFIX.length).startsWith("suggestion")) {
     if (message.channel.id !== channels.suggestionChannel) {
       const invalidChannelEmbed = new Discord.MessageEmbed()
-        .setColor(0xffc300)
+        .setColor(embedColor)
         .setTitle(`Invalid Channel`)
         .addField(
           `This command is only available in <#${channels.suggestionChannel}>`
@@ -514,26 +554,26 @@ bot.on("message", async (message) => {
 
   if (command.toLowerCase() === "addwelcomemsg") {
     const addWelcomeEmbed = new Discord.MessageEmbed()
-      .setTitle("WELCOME TO SKYHIKER 🎉")
-      .setColor(0xffc300)
+      .setTitle("                    WELCOME TO SKYHIKER 🎉")
+      .setThumbnail(serverIcon)
+      .setColor(embedColor)
       .setDescription(
-        "We're excited to have you with us here in our Discord Server! Read the rules to start communicating with others."
+        "We're excited to have you with us here in our Discord Server! Kindly acknowledgement to the rules and join us."
       )
       .addField(
-        "⚠GENERAL RULES⚠",
-        ":small_blue_diamond: **All Discord users must be 13 or above aged** per the Discord terms of service.\n" +
-          ":small_blue_diamond: **No inappropriate or offensive** usernames, languages statuses or profile pictures. You may be asked to change these.\n" +
-          ":small_blue_diamond: **No harassment of other players.** Racism, sexism, xenophobia, transphobia, homophobia, misogyny, etc. are never allowed.\n" +
-          ":small_blue_diamond: **All text channels are English only.** Staff must be able to read all messages sent here.\n" +
-          ":small_blue_diamond: **No impersonation of other users**, famous personalities, Skyhiker staff.\n" +
-          ":small_blue_diamond: **Remain respectful** of others at all times." +
-          ":small_blue_diamond: **Don't evade filters.** This applies to both words and links. If something is censored, it is censored for a reason!"
+        "                            __**GENERAL RULES**__ \n\n" +
+        "۰ **Be Nice and respectful** \n      -- No inappropriate or offensive users' information and languages. \n\n" +
+        "۰ **No sensitive topics** \n      -- Such as sexually explicit, racism, sexism, xenophobia, offensiveness, politics content. \n\n" +
+        "۰ **International language only** \n      -- Kindly respect and make allowance for others. \n\n" +
+        "۰ **Credit reliable** \n      -- Advertisement, Scamming, Spamming and Harassment are not allowed. \n\n" +
+        "۰ **Punishments application** \n      -- Staff has the rights to give punishments based on their judgement. ", "\u200b"
       )
       .addField(
         "\u200b",
-        ":warning: If you choose to break these rules you'll be asked to stop or kicked from the server. Breaking any of these rules may also result in a ban. But follow these few simple guidelines and we'll all have a good time!\n"
+        "۰ __**Kindly remain respectful to each others**__ \n" +
+        ":warning: Breach of ruels will lead to punishments.\n"
       )
-      .addField("\u200b", "👇 CLICK THE EMOJI IF YOU ACCEPT THE RULES")
+      .addField("\u200b", "✒️ CLICK TO ACCEPT THE T&C STATED.")
       .setImage(banners.skyHikerBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
@@ -551,7 +591,7 @@ bot.on("message", async (message) => {
   if (command.toLowerCase() === "addsuggestionmsg") {
     const addSuggestionEmbed = new Discord.MessageEmbed()
       .setTitle("SUGGESTION 💭")
-      .setColor(0xffc300)
+      .setColor(embedColor)
       .setDescription(
         "**We welcome any reasonable and suitable suggestions**\nPlease use the following template to write your suggestion."
       )
@@ -578,7 +618,7 @@ bot.on("message", async (message) => {
   if (command.toLowerCase() === "addpollsmsg") {
     const addPollsEmbed = new Discord.MessageEmbed()
       .setTitle("POLLS 📊")
-      .setColor(0xffc300)
+      .setColor(embedColor)
       .setDescription("Help us make a decision by voting in the poll!")
       .setImage(banners.pollsBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
@@ -593,16 +633,22 @@ bot.on("message", async (message) => {
   if (command.toLowerCase() === "addsupportmsg") {
     const addSupportEmbed = new Discord.MessageEmbed()
       .setTitle("SUPPORT 📬")
-      .setColor(0xffc300)
+      .setColor(embedColor)
       .addField(
         "**Report Player Format**",
         "```\nYour IGN: \nPlayer: \nReason: \n```"
       )
-      .addField("**Server Issue Format**", "```\nYour IGN: \nIssue: \n```")
-      .addField("**Enquiries Format**", "```\nYour IGN: \nQuestion: \n```")
       .addField(
-        "⚠FOLLOW THIS FORMAT⚠",
-        "🔹 **You won't get any support if you didn't follow this format** and the Staff team have rights to close your ticket submission!"
+        "**Server Issue Format**", 
+        "```\nYour IGN: \nIssue: \n```"
+      )
+      .addField(
+        "**Enquiries Format**", 
+        "```\nYour IGN: \nQuestion: \n```"
+      )
+      .addField(
+        " ",
+        "#**Kindly __Follow__ the format given**, or else staff will close the ticket.#"
       )
       .setImage(banners.supportBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
@@ -617,7 +663,7 @@ bot.on("message", async (message) => {
   if (command.toLowerCase() === "addeventmsg") {
     const addEventEmbed = new Discord.MessageEmbed()
       .setTitle("EVENT 🎊")
-      .setColor(0xffc300)
+      .setColor(embedColor)
       .addField(
         "**STAY TUNE**",
         "There are a lot of events in the server!\nParticipate and get a chance to win yourself a Legendary Loot! 🎁"
@@ -635,8 +681,8 @@ bot.on("message", async (message) => {
   if (command.toLowerCase() === "addannouncementmsg") {
     const addAnnouncementEmbed = new Discord.MessageEmbed()
       .setTitle("ANNOUNCEMENT 📢")
-      .setColor(0xffc300)
-      .setDescription("Keep updated on what's going on in this server!")
+      .setColor(embedColor)
+      .setDescription("Follow up the server status and information with us!")
       .setImage(banners.announcementBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
@@ -649,10 +695,61 @@ bot.on("message", async (message) => {
       });
   }
 
+  if (command.toLowerCase() === "addupdatemsg") {
+    const addUpdateEmbed = new Discord.MessageEmbed()
+      .setTitle("UPDATES 📈")
+      .setColor(embedColor)
+      .setDescription("Keep updated on what's going on in this server!")
+      .setImage(banners.updateBanner)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL())
+      .setTimestamp();
+
+    return bot.channels
+      .fetch(channels.updateChannel)
+      .then((updateChannel) => {
+        message.delete({ timeout: 2000 });
+        updateChannel.send(addUpdateEmbed);
+      });
+  }
+
+  if (command.toLowerCase() === "addrewardmsg") {
+    const addRewardEmbed = new Discord.MessageEmbed()
+      .setTitle("REWARDS 🎁")
+      .setColor(embedColor)
+      .setDescription("Any events winner or rewards will be published at here~")
+      .setImage(banners.rewardBanner)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL())
+      .setTimestamp();
+
+    return bot.channels
+      .fetch(channels.rewardChannel)
+      .then((rewardChannel) => {
+        message.delete({ timeout: 2000 });
+        rewardChannel.send(addRewardEmbed);
+      });
+  }
+
+  if (command.toLowerCase() === "addroleallocationmsg") {
+    const addRoleallocationEmbed = new Discord.MessageEmbed()
+      .setTitle("ROLES ALLOCATION 📛")
+      .setColor(embedColor)
+      .setDescription("Kindly select your gamemodes in the server ")
+      .setImage(banners.roleallocationBanner)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL())
+      .setTimestamp();
+
+    return bot.channels
+      .fetch(channels.roleallocationChannel)
+      .then((roleallocationChannel) => {
+        message.delete({ timeout: 2000 });
+        roleallocationChannel.send(addRoleallocationEmbed);
+      });
+  }
+
   if (command.toLowerCase() === "addwhatzupmsg") {
     const addWhatzUpEmbed = new Discord.MessageEmbed()
       .setTitle("WHATZ-UP 💬")
-      .setColor(0xffc300)
+      .setColor(embedColor)
       .setImage(banners.skyHikerBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();

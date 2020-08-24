@@ -13,7 +13,7 @@ module.exports = {
           .setTitle(
             `[Successful] ${banUser.user.tag} was banned for ${banDuration} days.`
           )
-          .addField(`Reason from ${message.author.tag}`, banReason)
+          .addField(`Reason from ${message.author.tag}`, `-> ${banReason}`)
           .setFooter(bot.user.username, bot.user.displayAvatarURL())
           .setTimestamp();
         console.log(`${banUser.user.tag} is banned.`);
