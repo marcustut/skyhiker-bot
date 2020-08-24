@@ -768,7 +768,8 @@ bot.on("message", async (message) => {
       .then(() => message.channel.send("New avatar is set."));
   }
 
-  if (message.content.startsWith(PREFIX)) {
+  // Invalid Command
+  if (message.content.startsWith(PREFIX) && !(command in bot.commands)) {
     message.delete({ timeout: 2000 });
     return message.channel.send("**Invalid command**\nKindly check `;help` for the list of commands.");
   }
