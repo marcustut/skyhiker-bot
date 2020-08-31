@@ -13,6 +13,7 @@ const announce = require("./src/server/announce");
 const poll = require("./src/server/poll");
 const event = require("./src/server/event");
 const update = require("./src/server/update");
+const reward = require("./src/server/reward");
 const storeSuggestion = require("./src/features/storeSuggestion");
 const respondSuggestion = require("./src/features/respondSuggestion");
 
@@ -33,6 +34,7 @@ const {
 // Commands Handler
 const fs = require("fs");
 const path = require("path");
+const constants = require("./constants");
 
 // Asynchronous function to read files (parallel loop)
 const readFiles = function (dir, done) {
@@ -107,6 +109,69 @@ bot.on("messageReactionAdd", async (reaction, user) => {
         });
     }
   }
+
+  // If the reaction comes from Role Channel
+  if (reaction.message.channel.id === channels.roleChannel) {
+    if (reaction.emoji.name === constants.survivorReaction) {
+      await reaction.message.guild.members.cache
+        .get(user.id)
+        .roles.add(roles.survivorRole)
+        .then((newSurvivor) => {
+          const newSurvivorEmbed = new Discord.MessageEmbed()
+            .setColor(0x00ed1c)
+            .setAuthor(newSurvivor.user.tag, newSurvivor.user.displayAvatarURL())
+            .setTitle(`${newSurvivor.user.tag}`)
+            .setDescription(`✅ You have enrolled to 𝐒𝐮𝐫𝐯𝐢𝐯𝐨𝐫𝐬 role.`)
+            .setTimestamp()
+            .setThumbnail(newSurvivor.user.displayAvatarURL());
+          
+          // Forward to verificationChannel
+          bot.channels
+            .fetch(channels.verificationChannel)
+            .then((verificationChannel) => {
+              verificationChannel.send(newSurvivorEmbed)
+            })
+
+          // Send in the roleChannel
+          bot.channels
+            .fetch(channels.roleChannel)
+            .then((roleChannel) => {
+              roleChannel.send(newSurvivorEmbed).then((sentMessage) => {
+                sentMessage.delete({ timeout: 3000 });
+              })
+            })
+        });
+    } else if (reaction.emoji.name === constants.skyblockerReaction) {
+      await reaction.message.guild.members.cache
+        .get(user.id)
+        .roles.add(roles.skyblockerRole)
+        .then((newSkyblocker) => {
+          const newSkyblockerEmbed = new Discord.MessageEmbed()
+            .setColor(0x00ed1c)
+            .setAuthor(newSkyblocker.user.tag, newSkyblocker.user.displayAvatarURL())
+            .setTitle(`${newSkyblocker.user.tag}`)
+            .setDescription(`✅ You have enrolled to 𝐒𝐤𝐲𝐛𝐥𝐨𝐜𝐤𝐞𝐫𝐬 role.`)
+            .setTimestamp()
+            .setThumbnail(newSkyblocker.user.displayAvatarURL());
+          
+          // Forward to verificationChannel
+          bot.channels
+            .fetch(channels.verificationChannel)
+            .then((verificationChannel) => {
+              verificationChannel.send(newSkyblockerEmbed)
+            })
+
+          // Send in the roleChannel
+          bot.channels
+            .fetch(channels.roleChannel)
+            .then((roleChannel) => {
+              roleChannel.send(newSkyblockerEmbed).then((sentMessage) => {
+                sentMessage.delete({ timeout: 3000 });
+              })
+            })
+        });
+    }
+  }
 });
 
 bot.on("messageReactionRemove", async (reaction, user) => {
@@ -143,6 +208,79 @@ bot.on("messageReactionRemove", async (reaction, user) => {
             .then((verificationChannel) =>
               verificationChannel.send(unverifiedMemberEmbed)
             );
+        });
+    }
+  }
+
+  // If the reaction comes from Role Channel
+  if (reaction.message.channel.id === channels.roleChannel) {
+    if (reaction.emoji.name === constants.survivorReaction) {
+      await reaction.message.guild.members.cache
+        .get(user.id)
+        .roles.remove(roles.survivorRole)
+        .then((unverifiedSurvior) => {
+          const unverifiedSurvivorEmbed = new Discord.MessageEmbed()
+            .setColor(0xe00000) // Red
+            .setAuthor(
+              unverifiedSurvior.user.tag,
+              unverifiedSurvior.user.displayAvatarURL()
+            )
+            .setTitle(`${unverifiedSurvior.user.tag}`)
+            .setDescription(
+              `📤 <@${unverifiedSurvior.user.id}> **is now removed from 𝐒𝐮𝐫𝐯𝐢𝐯𝐨𝐫𝐬 role.**`
+            )
+            .setTimestamp()
+            .setThumbnail(unverifiedSurvior.user.displayAvatarURL());
+          
+          // Forward to verificationChannel
+          bot.channels
+            .fetch(channels.verificationChannel)
+            .then((verificationChannel) => {
+              verificationChannel.send(unverifiedSurvivorEmbed)
+            })
+
+          // Send in the roleChannel
+          bot.channels
+            .fetch(channels.roleChannel)
+            .then((roleChannel) => {
+              roleChannel.send(unverifiedSurvivorEmbed).then((sentMessage) => {
+                sentMessage.delete({ timeout: 3000 });
+              })
+            })
+        });
+    } else if (reaction.emoji.name === constants.skyblockerReaction) {
+      await reaction.message.guild.members.cache
+        .get(user.id)
+        .roles.remove(roles.skyblockerRole)
+        .then((unverifiedSkyblocker) => {
+          const unverifiedSkyblockerEmbed = new Discord.MessageEmbed()
+            .setColor(0xe00000) // Red
+            .setAuthor(
+              unverifiedSkyblocker.user.tag,
+              unverifiedSkyblocker.user.displayAvatarURL()
+            )
+            .setTitle(`${unverifiedSkyblocker.user.tag}`)
+            .setDescription(
+              `📤 <@${unverifiedSkyblocker.user.id}> **is now removed from 𝐒𝐤𝐲𝐛𝐥𝐨𝐜𝐤𝐞𝐫𝐬 role.**`
+            )
+            .setTimestamp()
+            .setThumbnail(unverifiedSkyblocker.user.displayAvatarURL());
+          
+          // Forward to verificationChannel
+          bot.channels
+            .fetch(channels.verificationChannel)
+            .then((verificationChannel) => {
+              verificationChannel.send(unverifiedSkyblockerEmbed)
+            })
+
+          // Send in the roleChannel
+          bot.channels
+            .fetch(channels.roleChannel)
+            .then((roleChannel) => {
+              roleChannel.send(unverifiedSkyblockerEmbed).then((sentMessage) => {
+                sentMessage.delete({ timeout: 3000 });
+              })
+            })
         });
     }
   }
@@ -329,6 +467,7 @@ bot.on("message", async (message) => {
     return bot.commands.get("checkban").checkban(message, bot);
   }
 
+  // General Commands
   if (command === "announce") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       message.delete({ timeout: 2000 });
@@ -358,6 +497,7 @@ bot.on("message", async (message) => {
     }
   }
 
+  // poll <channel> <endtime> <poll details>
   if (command === "poll") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       message.delete({ timeout: 2000 });
@@ -366,23 +506,26 @@ bot.on("message", async (message) => {
         .then((sentMessage) => sentMessage.delete({ timeout: 3000 }));
     }
 
+    let pollAuthor = message.author.username;
+    let pollChannel = message.mentions.channels.first();
+    let pollEndTime = args.slice(1, 7).join(" ");
+    let pollArgs = args.slice(7).join(" ");
+
     if (!args.length)
       return message.channel.send("What poll you want to create?");
-    else {
-      const pollAuthor = message.author.username;
-      const pollArgs = args.slice(1).join(" ");
-      const pollChannel = message.mentions.channels.first();
 
-      if (!pollChannel) {
-        message.delete({ timeout: 2000 });
-        return message.channel.send("I believe that channel did not exist");
-      } else {
-        message.delete({ timeout: 2000 });
-        return pollChannel.send(poll.poll(pollArgs, pollAuthor, botAvatar));
-      }
+    if (!pollChannel) {
+      message.delete({ timeout: 2000 });
+      return message.channel.send("I believe that channel did not exist");
+    } else {
+      message.delete({ timeout: 2000 });
+      return pollChannel.send(
+        poll.poll(pollArgs, pollEndTime, pollAuthor, botAvatar)
+      );
     }
   }
 
+  // event <channel> <message>
   if (command === "event") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       message.delete({ timeout: 2000 });
@@ -408,6 +551,7 @@ bot.on("message", async (message) => {
     }
   }
 
+  //update <channel> <description/tag roles> <update server> <update details>
   if (command === "update") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
       message.delete({ timeout: 2000 });
@@ -416,20 +560,53 @@ bot.on("message", async (message) => {
         .then((sentMessage) => sentMessage.delete({ timeout: 3000 }));
     }
 
-    if (!args.length)
-      return message.channel.send("What event you want to broadcast?");
-    else {
-      const updateAuthor = message.author.username;
-      const updateArgs = args.slice(1).join(" ");
-      const updateChannel = message.mentions.channels.first();
+    let updateAuthor = message.author.username;
+    let updateChannel = message.mentions.channels.first();
+    let updateRole = args[1];
+    let updateServer = args[2];
+    let updateDesc = args.slice(3).join(" ");
 
-      if (!updateChannel) {
-        message.delete({ timeout: 2000 });
-        return message.channel.send("I believe that channel did not exist");
-      } else {
-        message.delete({ timeout: 2000 });
-        return updateChannel.send(update.update(updateArgs, updateAuthor));
-      }
+    if (!args.length)
+      return message.channel.send("What updates you want to broadcast?");
+
+    if (!updateChannel) {
+      message.delete({ timeout: 2000 });
+      return message.channel.send("I believe that channel did not exist");
+    } else {
+      message.delete({ timeout: 2000 });
+      return updateChannel.send(
+        update.update(updateAuthor, updateRole, updateServer, updateDesc)
+      );
+    }
+  }
+
+  //reward <channel> <prizewinner x3> <description>
+  if (command === "reward") {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
+      message.delete({ timeout: 2000 });
+      return message.channel
+        .send("You don't have permission")
+        .then((sentMessage) => sentMessage.delete({ timeout: 3000 }));
+    }
+
+    let rewardAuthor = message.author.username;
+    let rewardChannel = message.mentions.channels.first();
+    let rewardWinner = args.slice(1, 10).join(" ");
+    let rewardArgs = args.slice(10).join(" ");
+
+    if (!args.length)
+      return message.channel.send(
+        "Which reward and the winners you want to broadcast?"
+      );
+
+    if (!rewardChannel) {
+      message.delete({ timeout: 2000 });
+      return message.channel.send("I believe that channel did not exist");
+    } else {
+      message.delete({ timeout: 2000 });
+      return rewardChannel.send(
+        reward.reward(rewardAuthor, rewardWinner, rewardArgs)
+      );
     }
   }
 
@@ -473,6 +650,8 @@ bot.on("message", async (message) => {
       });
     }
   }
+
+  // Suggestion
   if (message.content.substring(PREFIX.length).startsWith("suggestion")) {
     if (message.channel.id !== channels.suggestionChannel) {
       const invalidChannelEmbed = new Discord.MessageEmbed()
@@ -505,8 +684,8 @@ bot.on("message", async (message) => {
 
       return message.channel.send(suggestionEmbed).then((embedMessage) => {
         message.delete({ timeout: 1000 });
-        embedMessage.react("⬆️");
-        embedMessage.react("⬇️");
+        embedMessage.react("⭕️");
+        embedMessage.react("❌");
       });
     } catch (error) {
       console.log(error.message);
@@ -563,30 +742,37 @@ bot.on("message", async (message) => {
     }
   }
 
+  // Welcome message
   if (command.toLowerCase() === "addwelcomemsg") {
     const addWelcomeEmbed = new Discord.MessageEmbed()
-      .setTitle("                    WELCOME TO SKYHIKER 🎉")
+      .setTitle("─── 🎉 WELCOME TO SKYHIKER 🎉 ───")
       .setThumbnail(serverIcon)
       .setColor(embedColor)
       .setDescription(
-        "We're excited see you here with us! Kindly go through to the rules before joining."
+        "We're excited see you here with us!\n Kindly go through to the rules before joining."
+      )
+      .addField("\u200b", "──────────────────────────────")
+      .addField(
+        "💡──__**GENERAL RULES**__──💡 \n\n",
+        "> **Be Nice and respectful** \n" +
+          "    -- No inappropriate or offensive users' information and languages. \n\n" +
+          "> **No sensitive topics** \n" +
+          "    -- EG. sexually explicit, racism, xenophobia, politics content. \n\n" +
+          "> **International language** \n" +
+          "    -- Kindly respect and make allowance for others. \n\n" +
+          "> **Credit reliable** \n" +
+          "    -- Advertisement, Scamming and Harassment are not allowed. ",
+        "\u200b"
       )
       .addField(
-        "                            __**GENERAL RULES**__ \n\n" +
-          "۰ **Be Nice and respectful** \n      -- No inappropriate or offensive users' information and languages. \n\n" +
-          "۰ **No sensitive topics** \n      -- EG. sexually explicit, racism, sexism, xenophobia, politics content. \n\n" +
-          "۰ **International language only** \n      -- Kindly respect and make allowance for others. \n\n" +
-          "۰ **Credit reliable** \n      -- Advertisement, Scamming, Spamming and Harassment are not allowed. \n\n" +
-          "۰ **Punishments application** \n      -- Staff has the rights to held every cases. "
+        "──────────────────────────────",
+        "**#Any breach of rules will result in punishments.**",
+        "\u200b"
       )
-      .addField(
-        "\u200b",
-        "۰ __**Kindly remain respectful to each others**__ \n"
-      )
-      .addField("\u200b", "✒️ CLICK TO ACCEPT THE T&C STATED.")
+      .addField("\u200b", "🛎️ ***CLICK TO ACCEPT THE RULES.***")
       .setImage(banners.skyHikerBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
-      .setTimestamp();
+      .setTimestamp(); /////////////////////////////////////////////////////////////////////////
 
     return bot.channels
       .fetch(channels.welcomeChannel)
@@ -603,7 +789,7 @@ bot.on("message", async (message) => {
       .setTitle("SUGGESTION 💭")
       .setColor(embedColor)
       .setDescription(
-        "**We welcome any reasonable and suitable suggestions**\nPlease use the following template to write your suggestion."
+        "**We welcome any reasonable and suitable suggestions** 📝\nKindly according to the following template to write your suggestion."
       )
       .addField(
         "\u200B",
@@ -629,7 +815,7 @@ bot.on("message", async (message) => {
     const addPollsEmbed = new Discord.MessageEmbed()
       .setTitle("POLLS 📊")
       .setColor(embedColor)
-      .setDescription("Help us make a decision by voting in the poll!")
+      .setDescription("Help us make a decision by voting in the poll! 🗃")
       .setImage(banners.pollsBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
@@ -670,7 +856,7 @@ bot.on("message", async (message) => {
       .setColor(embedColor)
       .addField(
         "**STAY TUNE**",
-        "There are a lot of events in the server!\nParticipate and get a chance to win yourself a Legendary Loot! 🎁"
+        "There are a lot of events with mystery gift and rewards! 📆 \n Participate and enjoy the game with us! ⚔️"
       )
       .setImage(banners.eventBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
@@ -686,7 +872,7 @@ bot.on("message", async (message) => {
     const addAnnouncementEmbed = new Discord.MessageEmbed()
       .setTitle("ANNOUNCEMENT 📢")
       .setColor(embedColor)
-      .setDescription("Follow up the server status and information with us!")
+      .setDescription("Follow up the server status and information with us! 📡")
       .setImage(banners.announcementBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
@@ -703,7 +889,9 @@ bot.on("message", async (message) => {
     const addUpdateEmbed = new Discord.MessageEmbed()
       .setTitle("UPDATES 📈")
       .setColor(embedColor)
-      .setDescription("Keep updated on what's going on in this server!")
+      .setDescription(
+        "Stay up to date on what updates happening in this server! 📋"
+      )
       .setImage(banners.updateBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
@@ -718,7 +906,9 @@ bot.on("message", async (message) => {
     const addRewardEmbed = new Discord.MessageEmbed()
       .setTitle("REWARDS 🎁")
       .setColor(embedColor)
-      .setDescription("Any events winner or rewards will be published at here~")
+      .setDescription(
+        "Looking for rewards and claims? \n We will notify winners here~ 🎖"
+      )
       .setImage(banners.rewardBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
@@ -729,21 +919,27 @@ bot.on("message", async (message) => {
     });
   }
 
-  if (command.toLowerCase() === "addroleallocationmsg") {
-    const addRoleallocationEmbed = new Discord.MessageEmbed()
-      .setTitle("ROLES ALLOCATION 📛")
+  if (command.toLowerCase() === "addrolemsg") {
+    const addRoleEmbed = new Discord.MessageEmbed()
+      .setTitle("─── 🦙 ROLES ALLOCATION 🦙 ───")
       .setColor(embedColor)
-      .setDescription("Kindly select your gamemodes in the server ")
-      .setImage(banners.roleallocationBanner)
+      .setDescription(
+        "Keep up to date on specific gamemode or announcements!! 📬\n React on emoji to allocate into the particular role."
+      )
+      .addField("───────────────────────────────────────", "\u200b")
+      .addField("🏹 ── **𝐒𝐮𝐫𝐯𝐢𝐯𝐨𝐫𝐬** ", "🏝️ ── **𝐒𝐤𝐲𝐛𝐥𝐨𝐜𝐤𝐞𝐫𝐬** ", "\u200b")
+      .addField("\u200b", "───────────────────────────────────────", "\u200b")
+      .setImage(banners.roleBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 
-    return bot.channels
-      .fetch(channels.roleallocationChannel)
-      .then((roleallocationChannel) => {
-        message.delete({ timeout: 2000 });
-        roleallocationChannel.send(addRoleallocationEmbed);
+    return bot.channels.fetch(channels.roleChannel).then((roleChannel) => {
+      message.delete({ timeout: 2000 });
+      roleChannel.send(addRoleEmbed).then((embedMessage) => {
+        embedMessage.react("🏹");
+        embedMessage.react("🏝️");
       });
+    });
   }
 
   if (command.toLowerCase() === "addwhatzupmsg") {
@@ -771,7 +967,9 @@ bot.on("message", async (message) => {
   // Invalid Command
   if (message.content.startsWith(PREFIX) && !(command in bot.commands)) {
     message.delete({ timeout: 2000 });
-    return message.channel.send(`**\`${command}\` is an invalid command**\nKindly check \`;help\` for the list of commands.`);
+    return message.channel.send(
+      `**\`${command}\` is an invalid command**\nKindly check \`;help\` for the list of commands.`
+    );
   }
 });
 

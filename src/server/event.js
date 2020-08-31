@@ -4,10 +4,10 @@ const { embedColor } = require("../../constants");
 module.exports = {
   name: "event",
   description: "To create an event.",
-  event: (args, eventAuthor) => {
+  event: (eventArgs, eventAuthor) => {
     const eventEmbed = new MessageEmbed()
-      .setTitle("————===========**ＳｋｙＨｉｋｅｒ**===========———— \n                                           ————__**ᴇᴠᴇɴᴛ**__————")
-      .setDescription(args)
+      .setTitle("───========**ＳｋｙＨｉｋｅｒ**========─── \n                              ──── __**ᴇᴠᴇɴᴛ**__ ────")
+      .setDescription(`${eventArgs}`)
       .setColor(embedColor)
       .setFooter(eventAuthor)
       .setTimestamp();

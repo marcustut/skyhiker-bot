@@ -3,7 +3,10 @@ module.exports = {
   roles: {
     memberRole: "737931806187323446",
     staffRole: "737931806187323448",
-  },
+    survivorRole: "747394683617017926",
+    skyblockerRole: "743678814923522168",
+    muteRole: "737931806187323444",
+},
   channels: {
     welcomeChannel: "737931806221009012",
     suggestionChannel: "737931806548033541",
@@ -15,7 +18,8 @@ module.exports = {
     verificationChannel: "747389603425681450",
     updateChannel: "743677676929286276",
     rewardChannel: "742681818079166545",
-    roleallocationChannel: "743679442806767706",
+    roleChannel: "743679442806767706",
+    moderationChannel: "737931807084773381"
   },
   banners: {
     skyHikerBanner: "https://i.ibb.co/NC59c2V/Sky-Hiker-Banner.png",
@@ -24,12 +28,14 @@ module.exports = {
     pollsBanner: "https://i.ibb.co/zsDjBcF/Polls-Banner.jpg",
     suggestionBanner: "https://i.ibb.co/M59Xfbs/Suggestion-Banner.jpg",
     supportBanner: "https://i.ibb.co/52jpdZJ/Support-Banner.jpg",
-    updateBanner: "https://ibb.co/371FRng",
-    rewardBanner: "https://ibb.co/ryqsvdV",
-    roleallocationBanner: "https://ibb.co/JxnyqnV",
+    updateBanner: "https://i.ibb.co/g31WVnq/updatesbanner.png",
+    rewardBanner: "https://i.ibb.co/9wZg90D/rewardsbanner.png",
+    roleBanner: "https://i.ibb.co/vXkD1w8/rolesallocationbanner.png",
   },
-  botAvatar: "https://i.ibb.co/z5ct5rp/shlogo.png",
-  serverIcon: "https://ibb.co/ZL7Bb0x",
-  accpetedReactions: ["✅"],
-  embedColor: "0xd6f8ff",
+    botAvatar: "https://i.ibb.co/dWN1ZfX/bot1.png",
+    serverIcon: "https://i.ibb.co/51vrvd8/shlogo2.png",
+    accpetedReactions: ["✅"],
+    survivorReaction: "🏹",
+    skyblockerReaction: "🏝️",
+    embedColor: "0xd6f8ff",
 };
