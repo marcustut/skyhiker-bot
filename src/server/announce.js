@@ -6,7 +6,7 @@ module.exports = {
   description: "To make an annoucement.",
   announce: (args, announcementAuthor) => {
     const announceEmbed = new MessageEmbed()
-      .setTitle("————===========**ＳｋｙＨｉｋｅｒ**===========———— \n                                  ————__**ᴀɴɴᴏᴜɴᴄᴇᴍᴇɴᴛ**__————")
+      .setTitle("───===========**ＳｋｙＨｉｋｅｒ**===========─── \n                                  ───__**ᴀɴɴᴏᴜɴᴄᴇᴍᴇɴᴛ**__───")
       .setDescription(args)
       .setColor(embedColor)
       .setFooter(announcementAuthor)
