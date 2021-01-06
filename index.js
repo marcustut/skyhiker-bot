@@ -119,27 +119,28 @@ bot.on("messageReactionAdd", async (reaction, user) => {
         .then((newSurvivor) => {
           const newSurvivorEmbed = new Discord.MessageEmbed()
             .setColor(0x00ed1c)
-            .setAuthor(newSurvivor.user.tag, newSurvivor.user.displayAvatarURL())
+            .setAuthor(
+              newSurvivor.user.tag,
+              newSurvivor.user.displayAvatarURL()
+            )
             .setTitle(`${newSurvivor.user.tag}`)
             .setDescription(`✅ You have enrolled to 𝐒𝐮𝐫𝐯𝐢𝐯𝐨𝐫𝐬 role.`)
             .setTimestamp()
             .setThumbnail(newSurvivor.user.displayAvatarURL());
-          
+
           // Forward to verificationChannel
           bot.channels
             .fetch(channels.verificationChannel)
             .then((verificationChannel) => {
-              verificationChannel.send(newSurvivorEmbed)
-            })
+              verificationChannel.send(newSurvivorEmbed);
+            });
 
           // Send in the roleChannel
-          bot.channels
-            .fetch(channels.roleChannel)
-            .then((roleChannel) => {
-              roleChannel.send(newSurvivorEmbed).then((sentMessage) => {
-                sentMessage.delete({ timeout: 3000 });
-              })
-            })
+          bot.channels.fetch(channels.roleChannel).then((roleChannel) => {
+            roleChannel.send(newSurvivorEmbed).then((sentMessage) => {
+              sentMessage.delete({ timeout: 3000 });
+            });
+          });
         });
     } else if (reaction.emoji.name === constants.skyblockerReaction) {
       await reaction.message.guild.members.cache
@@ -148,27 +149,28 @@ bot.on("messageReactionAdd", async (reaction, user) => {
         .then((newSkyblocker) => {
           const newSkyblockerEmbed = new Discord.MessageEmbed()
             .setColor(0x00ed1c)
-            .setAuthor(newSkyblocker.user.tag, newSkyblocker.user.displayAvatarURL())
+            .setAuthor(
+              newSkyblocker.user.tag,
+              newSkyblocker.user.displayAvatarURL()
+            )
             .setTitle(`${newSkyblocker.user.tag}`)
             .setDescription(`✅ You have enrolled to 𝐒𝐤𝐲𝐛𝐥𝐨𝐜𝐤𝐞𝐫𝐬 role.`)
             .setTimestamp()
             .setThumbnail(newSkyblocker.user.displayAvatarURL());
-          
+
           // Forward to verificationChannel
           bot.channels
             .fetch(channels.verificationChannel)
             .then((verificationChannel) => {
-              verificationChannel.send(newSkyblockerEmbed)
-            })
+              verificationChannel.send(newSkyblockerEmbed);
+            });
 
           // Send in the roleChannel
-          bot.channels
-            .fetch(channels.roleChannel)
-            .then((roleChannel) => {
-              roleChannel.send(newSkyblockerEmbed).then((sentMessage) => {
-                sentMessage.delete({ timeout: 3000 });
-              })
-            })
+          bot.channels.fetch(channels.roleChannel).then((roleChannel) => {
+            roleChannel.send(newSkyblockerEmbed).then((sentMessage) => {
+              sentMessage.delete({ timeout: 3000 });
+            });
+          });
         });
     }
   }
@@ -231,22 +233,20 @@ bot.on("messageReactionRemove", async (reaction, user) => {
             )
             .setTimestamp()
             .setThumbnail(unverifiedSurvior.user.displayAvatarURL());
-          
+
           // Forward to verificationChannel
           bot.channels
             .fetch(channels.verificationChannel)
             .then((verificationChannel) => {
-              verificationChannel.send(unverifiedSurvivorEmbed)
-            })
+              verificationChannel.send(unverifiedSurvivorEmbed);
+            });
 
           // Send in the roleChannel
-          bot.channels
-            .fetch(channels.roleChannel)
-            .then((roleChannel) => {
-              roleChannel.send(unverifiedSurvivorEmbed).then((sentMessage) => {
-                sentMessage.delete({ timeout: 3000 });
-              })
-            })
+          bot.channels.fetch(channels.roleChannel).then((roleChannel) => {
+            roleChannel.send(unverifiedSurvivorEmbed).then((sentMessage) => {
+              sentMessage.delete({ timeout: 3000 });
+            });
+          });
         });
     } else if (reaction.emoji.name === constants.skyblockerReaction) {
       await reaction.message.guild.members.cache
@@ -265,22 +265,20 @@ bot.on("messageReactionRemove", async (reaction, user) => {
             )
             .setTimestamp()
             .setThumbnail(unverifiedSkyblocker.user.displayAvatarURL());
-          
+
           // Forward to verificationChannel
           bot.channels
             .fetch(channels.verificationChannel)
             .then((verificationChannel) => {
-              verificationChannel.send(unverifiedSkyblockerEmbed)
-            })
+              verificationChannel.send(unverifiedSkyblockerEmbed);
+            });
 
           // Send in the roleChannel
-          bot.channels
-            .fetch(channels.roleChannel)
-            .then((roleChannel) => {
-              roleChannel.send(unverifiedSkyblockerEmbed).then((sentMessage) => {
-                sentMessage.delete({ timeout: 3000 });
-              })
-            })
+          bot.channels.fetch(channels.roleChannel).then((roleChannel) => {
+            roleChannel.send(unverifiedSkyblockerEmbed).then((sentMessage) => {
+              sentMessage.delete({ timeout: 3000 });
+            });
+          });
         });
     }
   }
@@ -610,46 +608,46 @@ bot.on("message", async (message) => {
     }
   }
 
-  if (command === "search") {
-    if (!args.length)
-      return message.channel.send("What image you want me to search?");
-    else {
-      message.delete();
-      let searchArgs = args.slice(0).join(" ");
-      var options = {
-        url:
-          "http://results.dogpile.com/serp?qc=images&q=pinterest" + searchArgs,
-        method: "GET",
-        headers: {
-          Accept: "text/html",
-          "User-Agent": "Chrome",
-        },
-      };
-      request(options, function (error, response, responseBody) {
-        if (error) {
-          return;
-        }
+  //if (command === "search") {
+  //if (!args.length)
+  //return message.channel.send("What image you want me to search?");
+  //else {
+  //message.delete();
+  //let searchArgs = args.slice(0).join(" ");
+  //var options = {
+  //url:
+  //"http://results.dogpile.com/serp?qc=images&q=pinterest" + searchArgs,
+  //method: "GET",
+  //headers: {
+  //Accept: "text/html",
+  //"User-Agent": "Chrome",
+  //},
+  //};
+  //request(options, function (error, response, responseBody) {
+  //if (error) {
+  //return;
+  //}
 
-        $ = cheerio.load(responseBody);
+  //$ = cheerio.load(responseBody);
 
-        var links = $(".image a.link");
+  //var links = $(".image a.link");
 
-        var urls = new Array(links.length)
-          .fill(0)
-          .map((v, i) => links.eq(i).attr("href"));
-        if (!urls.length) {
-          return;
-        }
-        let imageChannel = bot.channels.cache.get("737931806548033542");
-        const searchEmbed = new Discord.MessageEmbed()
-          .setImage(urls[Math.floor(Math.random() * urls.length)])
-          .setColor(embedColor)
-          .setFooter(message.author.username)
-          .setTimestamp();
-        imageChannel.send(searchEmbed);
-      });
-    }
-  }
+  //var urls = new Array(links.length)
+  //.fill(0)
+  //.map((v, i) => links.eq(i).attr("href"));
+  //if (!urls.length) {
+  //return;
+  //}
+  //let imageChannel = bot.channels.cache.get("737931806548033542");
+  //const searchEmbed = new Discord.MessageEmbed()
+  //.setImage(urls[Math.floor(Math.random() * urls.length)])
+  //.setColor(embedColor)
+  //.setFooter(message.author.username)
+  //.setTimestamp();
+  //imageChannel.send(searchEmbed);
+  //});
+  //}
+  //}
 
   // Suggestion
   if (message.content.substring(PREFIX.length).startsWith("suggestion")) {
@@ -658,7 +656,9 @@ bot.on("message", async (message) => {
         .setColor(embedColor)
         .setTitle(`Invalid Channel`)
         .addField(
-          `This command is only available in <#${channels.suggestionChannel}>`
+          "\u200b",
+          `This command is only available in <#${channels.suggestionChannel}>`,
+          false
         )
         .setFooter(bot.user.username, bot.user.displayAvatarURL())
         .setTimestamp();
@@ -684,8 +684,9 @@ bot.on("message", async (message) => {
 
       return message.channel.send(suggestionEmbed).then((embedMessage) => {
         message.delete({ timeout: 1000 });
-        embedMessage.react("⭕️");
-        embedMessage.react("❌");
+        embedMessage.react("⬆️").then((r) => {
+          embedMessage.react("⬇️");
+        });
       });
     } catch (error) {
       console.log(error.message);
@@ -779,7 +780,7 @@ bot.on("message", async (message) => {
       .then((welcomeChannel) => {
         message.delete({ timeout: 2000 });
         welcomeChannel.send(addWelcomeEmbed).then((embedMessage) => {
-          embedMessage.react("✅");
+          embedMessage.react(":white_check_mark:");
         });
       });
   }
