@@ -6,7 +6,7 @@ module.exports = {
   description: "To create an event.",
   event: (eventArgs, eventAuthor) => {
     const eventEmbed = new MessageEmbed()
-      .setTitle("───========**ＳｋｙＨｉｋｅｒ**========─── \n                              ──── __**ᴇᴠᴇɴᴛ**__ ────")
+      .setTitle("─────   __**ＳＫＹＨＩＫＥＲＭＣ**__   ───── \n                                »   __**ᴇᴠᴇɴᴛ**__   «")
       .setDescription(`${eventArgs}`)
       .setColor(embedColor)
       .setFooter(eventAuthor)

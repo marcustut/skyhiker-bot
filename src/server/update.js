@@ -7,7 +7,7 @@ module.exports = {
   update: (updateAuthor, updateRole, updateServer, updateDescrip) => {
     const updateEmbed = new MessageEmbed()
       .setTitle(
-        "───========**ＳｋｙＨｉｋｅｒ**========─── \n                            ──── __**ᴜᴘᴅᴀᴛᴇꜱ**__ ────"
+        "─────   __**ＳＫＹＨＩＫＥＲＭＣ**__   ───── \n                            »   __**ᴜᴘᴅᴀᴛᴇꜱ**__   « "
       )
       .setDescription(`${updateRole}`)
       .addField("───__**𝐒𝐞𝐫𝐯𝐞𝐫**__───", `${updateServer}`)

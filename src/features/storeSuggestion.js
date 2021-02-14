@@ -32,10 +32,10 @@ module.exports = {
         discordMessage.author.tag,
         discordMessage.author.displayAvatarURL()
       )
-      .setColor(0xe3fff4) // Light Green
+      .setColor(0xf5f000) // Yellow
       .setTitle(`Suggestion #${commandsDoc.data().suggestionsCount + 1}`)
       .setDescription(
-        `IGN: ${user.IGN}\nSuggestion: ${user.suggestion}\nReason: ${user.reason}`
+        `IGN: ${user.IGN}\nServer: ${user.server}\nSuggestion: ${user.suggestion}\nReason: ${user.reason}\n\n⚖️The suggestion is pending & discussing by the organizers and reply within few days. Please wait patiently and thank you for sharing your ideas❤️`
       )
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
@@ -62,5 +62,5 @@ module.exports = {
     );
 
     return suggestionEmbed;
-  }
+  },
 };

@@ -6,7 +6,7 @@ module.exports = {
     survivorRole: "747394683617017926",
     skyblockerRole: "743678814923522168",
     muteRole: "737931806187323444",
-},
+  },
   channels: {
     welcomeChannel: "737931806221009012",
     suggestionChannel: "737931806548033541",
@@ -19,7 +19,9 @@ module.exports = {
     updateChannel: "743677676929286276",
     rewardChannel: "742681818079166545",
     roleChannel: "743679442806767706",
-    moderationChannel: "737931807084773381"
+    moderationChannel: "737931807084773381",
+    devChannel: "737931807084773378",
+    toDoSuggestionChannel: "808621348440113163",
   },
   banners: {
     skyHikerBanner: "https://i.ibb.co/NC59c2V/Sky-Hiker-Banner.png",
@@ -32,10 +34,10 @@ module.exports = {
     rewardBanner: "https://i.ibb.co/9wZg90D/rewardsbanner.png",
     roleBanner: "https://i.ibb.co/vXkD1w8/rolesallocationbanner.png",
   },
-    botAvatar: "https://i.ibb.co/dWN1ZfX/bot1.png",
-    serverIcon: "https://i.ibb.co/51vrvd8/shlogo2.png",
-    accpetedReactions: ["✅"],
-    survivorReaction: "🏹",
-    skyblockerReaction: "🏝️",
-    embedColor: "0xd6f8ff",
+  botAvatar: "https://i.ibb.co/dWN1ZfX/bot1.png",
+  serverIcon: "https://i.ibb.co/51vrvd8/shlogo2.png",
+  accpetedReactions: ["✅"],
+  survivorReaction: "🏹",
+  skyblockerReaction: "🏝️",
+  embedColor: "0xd6f8ff",
 };

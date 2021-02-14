@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+﻿const { MessageEmbed } = require("discord.js");
 const { db } = require("../services/firebase");
 
 module.exports = {
@@ -18,19 +18,25 @@ module.exports = {
       status: approve ? "approved" : "denied",
     });
 
+    // Delete the original message
+    message.channel.messages
+      .fetch(suggestion.messageID)
+      .then((message) => message.delete())
+      .catch((err) => console.error(err));
+
     // Creating a Embed reply to user
     const respondEmbed = new MessageEmbed()
       .setAuthor(suggestion.userTag, suggestion.userAvatar)
-      .setColor(0xe3fff4) // Light Green
-      .setTitle(
-        `Suggestion #${userArgs.suggestionID} ${
-          approve ? "Approved" : "Denied"
-        }`
-      )
+      .setColor(approve ? 0x2ac200 : 0xc20000) // if approved, green else red
+      .setTitle(`Suggestion #${userArgs.suggestionID}`)
       .setDescription(
         `IGN: ${suggestion.IGN}\nSuggestion: ${suggestion.suggestion}\nReason: ${suggestion.reason}`
       )
-      .addField(`Reason from ${message.author.tag}`, `${userArgs.reason}`)
+      .addField(
+        "──────  __**𝐑𝐞𝐬𝐩𝐨𝐧𝐝**__  ──────",
+        `__${approve ? "💖 𝘼𝙥𝙥𝙧𝙤𝙫𝙚𝙙" : "💔 𝘿𝙚𝙣𝙞𝙚𝙙"}__ by ${message.author.tag}`
+      )
+      .addField("**Reason given:**", `${userArgs.reason}`)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 

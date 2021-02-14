@@ -6,7 +6,7 @@ module.exports = {
   description: "To create a poll.",
   poll: (pollArgs, pollEndTime, pollAuthor) => {
     const pollEmbed = new MessageEmbed()
-      .setTitle("───========**ＳｋｙＨｉｋｅｒ**========─── \n                               ──── __**ᴘᴏʟʟ**__ ────")
+      .setTitle("─────   __**ＳＫＹＨＩＫＥＲＭＣ**__   ───── \n                                »   __**ᴘᴏʟʟꜱ**__   «")
       .setDescription(`${pollArgs}`)
       .addField(
           "⌛️ ───  __𝐏𝐨𝐥𝐥 𝐄𝐧𝐝 𝐓𝐢𝐦𝐞__  ─── ⏳", `${pollEndTime}`

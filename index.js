@@ -8,12 +8,16 @@ const bot = new Discord.Client({
 const cheerio = require("cheerio");
 const request = require("request");
 
+// Firebase
+const { db } = require("./src/services/firebase");
+
 // Self defined modules
 const announce = require("./src/server/announce");
 const poll = require("./src/server/poll");
 const event = require("./src/server/event");
 const update = require("./src/server/update");
 const reward = require("./src/server/reward");
+const broadcast = require("./src/server/broadcast");
 const storeSuggestion = require("./src/features/storeSuggestion");
 const respondSuggestion = require("./src/features/respondSuggestion");
 
@@ -549,6 +553,34 @@ bot.on("message", async (message) => {
     }
   }
 
+  // boardcast (for anyplaces if want to broadcast anything)
+  if (command === "broadcast") {
+    if (!message.member.roles.cache.get(roles.staffRole)) {
+      message.delete({ timeout: 2000 });
+      return message.channel
+        .send("You don't have permission")
+        .then((sentMessage) => sentMessage.delete({ timeout: 3000 }));
+    }
+
+    if (!args.length)
+      return message.channel.send("What msg you want to broadcast?");
+    else {
+      const broadcastAuthor = message.author.username;
+      const broadcastArgs = args.slice(1).join(" ");
+      const broadcastChannel = message.mentions.channels.first();
+
+      if (!broadcastChannel) {
+        message.delete({ timeout: 2000 });
+        return message.channel.send("I believe that channel did not exist");
+      } else {
+        message.delete({ timeout: 2000 });
+        return broadcastChannel.send(
+          broadcast.broadcast(broadcastArgs, broadcastAuthor)
+        );
+      }
+    }
+  }
+
   //update <channel> <description/tag roles> <update server> <update details>
   if (command === "update") {
     if (!message.member.roles.cache.get(roles.staffRole)) {
@@ -671,8 +703,9 @@ bot.on("message", async (message) => {
     const parsedMesssage = message.content.trim().split("\n");
     const user = {
       IGN: parsedMesssage[1].split(":")[1].trim(),
-      suggestion: parsedMesssage[2].split(":")[1].trim(),
-      reason: parsedMesssage[3].split(":")[1].trim(),
+      server: parsedMesssage[2].split(":")[1].trim(),
+      suggestion: parsedMesssage[3].split(":")[1].trim(),
+      reason: parsedMesssage[4].split(":")[1].trim(),
     };
 
     try {
@@ -682,16 +715,30 @@ bot.on("message", async (message) => {
         bot
       );
 
-      return message.channel.send(suggestionEmbed).then((embedMessage) => {
-        message.delete({ timeout: 1000 });
-        embedMessage.react("⬆️").then((r) => {
-          embedMessage.react("⬇️");
+      return message.channel
+        .send(suggestionEmbed)
+        .then(async (embedMessage) => {
+          message.delete({ timeout: 1000 });
+          embedMessage.react("💞").then((r) => {
+            embedMessage.react("💔");
+          });
+
+          // get the suggestion doc in Firestore
+          const commandsCollection = db.doc("/discord/commands");
+          const commandsDoc = await commandsCollection.get();
+          const suggestionCollection = db
+            .collection("/discord/commands/suggestions")
+            .doc(`suggestion${commandsDoc.data().suggestionsCount}`);
+
+          // Set the messageID
+          await suggestionCollection.update({
+            messageID: embedMessage.id,
+          });
         });
-      });
     } catch (error) {
       console.log(error.message);
       return message.channel
-        .send("An Error Occured\nMake sure your template is correct.")
+        .send("An Error Occured\nKindly make sure your template is correct.")
         .then((sentMessage) => {
           sentMessage.delete({ timeout: 3000 });
         });
@@ -731,6 +778,13 @@ bot.on("message", async (message) => {
             approve: false,
           });
       message.delete({ timeout: 2000 });
+
+      // If approved send forward the response to To-Do-Suggestion
+      if (isApprove)
+        bot.channels
+          .fetch(channels.toDoSuggestionChannel)
+          .then((channel) => channel.send(respondEmbed));
+
       return message.channel.send(respondEmbed);
     } catch (error) {
       console.log(error.message);
@@ -741,6 +795,16 @@ bot.on("message", async (message) => {
           sentMessage.delete({ timeout: 3000 });
         });
     }
+  }
+
+  // TODO: Delete this after testing
+  if (command.toLowerCase() === "testing") {
+    if (message.channel.id !== channels.devChannel) return;
+
+    message.channel.messages
+      .fetch("810023029089239090")
+      .then((message) => console.log(message))
+      .catch((err) => console.error(err));
   }
 
   // Welcome message
