@@ -30,13 +30,12 @@ module.exports = {
       .setColor(approve ? 0x2ac200 : 0xc20000) // if approved, green else red
       .setTitle(`Suggestion #${userArgs.suggestionID}`)
       .setDescription(
-        `IGN: ${suggestion.IGN}\nSuggestion: ${suggestion.suggestion}\nReason: ${suggestion.reason}`
+        `𝗡𝗮𝗺𝗲: ${suggestion.IGN} \n𝗦𝗲𝗿𝘃𝗲𝗿: ${suggestion.SERVER} \n𝗦𝘂𝗴𝗴𝗲𝘀𝘁𝗶𝗼𝗻: ${suggestion.SUGGESTION} \n𝗥𝗲𝗮𝘀𝗼𝗻: ${suggestion.REASON}`
       )
       .addField(
-        "──────  __**𝐑𝐞𝐬𝐩𝐨𝐧𝐝**__  ──────",
-        `__${approve ? "💖 𝘼𝙥𝙥𝙧𝙤𝙫𝙚𝙙" : "💔 𝘿𝙚𝙣𝙞𝙚𝙙"}__ by ${message.author.tag}`
+        `────── __**${approve ? "💖 𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 💖" : "💔 𝐃𝐞𝐧𝐢𝐞𝐝 💔"}**__ ──────`,
+        `**Reason given:** \n${userArgs.reason}`
       )
-      .addField("**Reason given:**", `${userArgs.reason}`)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
 

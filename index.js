@@ -703,9 +703,9 @@ bot.on("message", async (message) => {
     const parsedMesssage = message.content.trim().split("\n");
     const user = {
       IGN: parsedMesssage[1].split(":")[1].trim(),
-      server: parsedMesssage[2].split(":")[1].trim(),
-      suggestion: parsedMesssage[3].split(":")[1].trim(),
-      reason: parsedMesssage[4].split(":")[1].trim(),
+      SERVER: parsedMesssage[2].split(":")[1].trim(),
+      SUGGESTION: parsedMesssage[3].split(":")[1].trim(),
+      REASON: parsedMesssage[4].split(":")[1].trim(),
     };
 
     try {
@@ -834,10 +834,10 @@ bot.on("message", async (message) => {
         "**#Any breach of rules will result in punishments.**",
         "\u200b"
       )
-      .addField("\u200b", "🛎️ ***CLICK TO ACCEPT THE RULES.***")
+      .addField("\u200b", "🛎️ ***CLICK '✅' TO ACCEPT THE RULES.***")
       .setImage(banners.skyHikerBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
-      .setTimestamp(); /////////////////////////////////////////////////////////////////////////
+      .setTimestamp();
 
     return bot.channels
       .fetch(channels.welcomeChannel)
@@ -858,11 +858,11 @@ bot.on("message", async (message) => {
       )
       .addField(
         "\u200B",
-        "```\n;suggestion\nIGN: \nSuggestion: \nReason: \n```"
+        "```\n;suggestion\nIGN: \nSERVER: \nSUGGESTION: \nREASON: \n```"
       )
       .addField(
         "\u200B",
-        "**Staff will respond to your suggestions within 3 days**"
+        "**Staff will respond to your suggestions within 2 weeks.**"
       )
       .setImage(banners.suggestionBanner)
       .setFooter(bot.user.username, bot.user.displayAvatarURL())

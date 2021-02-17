@@ -12,7 +12,7 @@ module.exports = {
         "📑 SkyHiker Bot's list of commands"
       )
       .addFields(
-        { name: "1️⃣\n;suggestion\nIGN: <IGN>\nSuggestion: <suggestion>\nReason: <reason>", value: ";suggestion\nIGN: Marcus\nSuggestion: Add more events\nReason: It's Fun!\n`To issue suggestions in the suggestion channel.`", inline: true },
+        { name: "1️⃣\n;suggestion\nIGN: <IGN>\nSERVER: <Server Name>\nSUGGESTION: <Suggestion>\nREASON: <Reason>", value: ";suggestion\nIGN: Marcus\nSERVER: Skyblock\nSUGGESTION: Add more events\nREASON: It's Fun!\n`To issue suggestions in the suggestion channel.`", inline: true },
         { name: "2️⃣\n;help", value: ";help\n`To display this list of commands.`", inline: true },
       )
       .setFooter(bot.user.username, bot.user.displayAvatarURL())

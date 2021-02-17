@@ -19,9 +19,10 @@ module.exports = {
       userID: discordMessage.author.id,
       userAvatar: discordMessage.author.displayAvatarURL(),
       IGN: user.IGN,
+      SERVER: user.SERVER,
       date: new Date(),
-      suggestion: user.suggestion,
-      reason: user.reason,
+      SUGGESTION: user.SUGGESTION,
+      REASON: user.REASON,
       response: null,
       status: "pending",
     });
@@ -35,7 +36,11 @@ module.exports = {
       .setColor(0xf5f000) // Yellow
       .setTitle(`Suggestion #${commandsDoc.data().suggestionsCount + 1}`)
       .setDescription(
-        `IGN: ${user.IGN}\nServer: ${user.server}\nSuggestion: ${user.suggestion}\nReason: ${user.reason}\n\n⚖️The suggestion is pending & discussing by the organizers and reply within few days. Please wait patiently and thank you for sharing your ideas❤️`
+        `𝗡𝗮𝗺𝗲: ${user.IGN} \n𝗦𝗲𝗿𝘃𝗲𝗿: ${user.SERVER} \n𝗦𝘂𝗴𝗴𝗲𝘀𝘁𝗶𝗼𝗻: ${user.SUGGESTION} \n𝗥𝗲𝗮𝘀𝗼𝗻: ${user.REASON}\n `
+      )
+      .addField(
+        "──────  __**𝐏𝐞𝐧𝐝𝐢𝐧𝐠**__  ──────",
+        `⚖️ The suggestion is now under discussing, please wait patiently and thank you for sharing your ideas! ❤️`
       )
       .setFooter(bot.user.username, bot.user.displayAvatarURL())
       .setTimestamp();
